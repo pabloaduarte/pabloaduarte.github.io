@@ -1,0 +1,73 @@
+---
+title: "Real Economy Tracker: First Try"
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##R Preamble
+library(MacrobondAPI)
+library(tidyverse)
+library(zoo)
+library(xts)
+library(tsbox)
+library(ggplot2)
+#library(plotly)
+library(htmlwidgets)
+library(htmltools)
+library(dygraphs)
+#library(gridExtra)
+```
+Es gibt kaum Zeichen einer zeitnahen Erholung. Der **Stromverbrauch** schien sich im April leicht zu erholen, ist derzeit bei 80% bzw. 70% des Konsums im Februar. Nur in Italieb steigt der Stromverbrauch langsam wieder an. Das **Lkw-Maut-Fahrleistungsindex** für Deutschland deutet eine leichte Erholung seit Anfang Mai an.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##Electricity
+
+electricity <- c("entso_loa_de_11_q1", "entso_loa_fr_11", "entso_loa_it_11", "entso_loa_es_11")
+request_elec <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(electricity))
+week_elec <-  rollapply(request_elec, 7, mean)
+week_el_index <- as.xts(apply(week_elec,2, function(x)  x*100/x["2020-02-01"]))
+
+colnames(week_el_index) <- c("Deutschland", "Frankreich", "Italien", "Spanien")
+
+## Merge US DATA
+library(eia)
+mykey <- "b6e4a42a8e85f78a8e1e4fcfd1d7f6dd"
+eia_set_key(mykey)
+id <- "EBA.US48-ALL.D.H"
+d <- eia_series(id, n = 10000)
+
+us_elec <- data.frame(d$data)
+us_elec <- data.frame(us_elec$date,us_elec$value)
+us_elec_ts <- ts_xts(us_elec)
+us_day <- apply.daily(us_elec_ts,mean,1)
+index(us_day)<- as.Date(unlist(lapply(strsplit(as.character(index(us_day))," "), function(x) x[1])))
+
+us_7day <-  rollapply(us_day, 7, mean)
+us_7day_index <- as.xts(apply(us_7day,2, function(x)  x*100/x["2020-02-01"]))
+colnames(us_7day_index) <- c("USA")
+
+week_all_index <- merge(week_el_index, us_7day_index)
+
+dygraph(week_all_index["202002/"], main = "Elektrizitätkonsum seit Februar 2020")%>%
+  dyAxis("x", drawGrid = FALSE)%>%
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+  dyOptions(colors = c("black","maroon", "gray", "navy", "red"))%>%
+  dyLegend(width = 400)%>%
+dyRangeSelector()
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+trucks <- c("detran0225")
+request_trucks <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(trucks))
+colnames(request_trucks) <- c("Deutschland")
+trucks_ma <-  rollapply(request_trucks, 7, mean)
+trucks_ma_index <- as.xts(apply(trucks_ma,2, function(x)  x*100/x["2020-02-01"]))
+
+dygraph(trucks_ma["202002/"], main = "Lkw-Maut-Fahrleistungsindex")%>%
+dyAxis("x", drawGrid = FALSE)%>% 
+dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
+dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
+dyLegend()%>%
+dyRangeSelector()
+```
+
+
