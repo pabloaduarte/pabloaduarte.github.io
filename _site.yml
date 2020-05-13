@@ -1,0 +1,5 @@
+name: "my-website"
+output_dir: "."
+navbar:
+  title: "Real Economy Tracker"
+  href: index.html
