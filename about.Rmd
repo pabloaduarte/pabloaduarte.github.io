@@ -2,4 +2,4 @@
 title: "About"
 ---
 
-This is a test version.
+This is a pilot project.
