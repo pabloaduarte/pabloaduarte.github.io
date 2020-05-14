@@ -2,4 +2,4 @@
 title: "Data"
 ---
 
-The data comes from home.
+The data comes from public sources.
