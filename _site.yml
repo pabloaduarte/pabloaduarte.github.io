@@ -1,5 +1,15 @@
-name: "my-website"
+name: "Real Economy Tracker"
 output_dir: "."
 navbar:
-  title: "Real Economy Tracker"
-  href: index.html
+  title: ""
+  left: 
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: about.html
+    - text: Data Sources
+      href: data.html
+      
+output:
+  html_document: 
+   theme: flatly
