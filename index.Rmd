@@ -66,5 +66,3 @@ dygraph(week_all_index["201811/"], main = "Stromverbrauch (01.02.2020 = 100)", w
   dyUnzoom()
 ```
 *Quelle: ENTSO-E, EIA, China NEA.*
-
-
