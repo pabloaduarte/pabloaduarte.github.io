@@ -2,4 +2,4 @@
 title: "About"
 ---
 
-This is a pilot project.
+Diese Website ist ein Pilotprojekt.

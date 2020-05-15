@@ -7,8 +7,6 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
-    - text: Data Sources
-      href: data.html
       
 output:
   html_document: 

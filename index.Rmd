@@ -17,6 +17,29 @@ library(dygraphs)
 #library(gridExtra)
 ```
 
+In den **USA** ist das BIP im ersten Quartal 2020 um 4,8% (annualisiert), in **China** um 9,8% und in der **Eurozone** um 3,83% (QoQ) geschrumpft. Unter den größten Volkswirtschaften der Eurozone war **Frankreich** am stärksten betroffen (-5,83%). In **Deutschland** ging das BIP um 2,2% zurück.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
+
+gdp <- c("denaac0152", "frnaac0284", "itnaac0466", "esnaac0097", "eunaac2903", "usnaac0169", "cnnaac0001")
+request_gdp <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp))
+colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
+gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x)-1)))
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##GDP Dynamic Graph
+dygraph(gdp_dif["200701/"], main = "BIP-Wachstum (QoQ%)", width = 800)%>%
+  dyAxis("x", drawGrid = FALSE)%>%
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
+  dyCSS("legend.css")%>%
+  dyLegend(labelsSeparateLines = TRUE)%>%
+  dyRangeSelector()%>%
+  dyUnzoom()
+```
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##Electricity
 
