@@ -16,8 +16,7 @@ library(htmltools)
 library(dygraphs)
 #library(gridExtra)
 ```
-
-In den **USA** ist das BIP im ersten Quartal 2020 um 4,8% (annualisiert), in **China** um 9,8% und in der **Eurozone** um 3,83% (QoQ) geschrumpft. Unter den größten Volkswirtschaften der Eurozone war **Frankreich** am stärksten betroffen (-5,83%). In **Deutschland** ging das BIP um 2,2% zurück.
+#### Die **Industrieproduktion** in **China** wuchs im April 3.9% (YoY) und in den **USA** sank sie um 11.25%. Den schwersten Einbruch erlitt im März **Italien** mit -28% (YoY). In der **Eurozone** ging die Industriproduktion um 11.25% zurück.  
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
 ##GDP
@@ -25,20 +24,35 @@ gdp <- c("denaac0152", "frnaac0284", "itnaac0466", "esnaac0097", "eunaac2903", "
 request_gdp <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp))
 colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
 gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x)-1)))
+index(gdp_dif) <- as.yearqtr(index(gdp_dif))
+index(gdp_dif) <- index(gdp_dif)+(1/4)
 
+
+
+##Industrial Prod
+iprod <- c("deprod1404","frprod0228","itprod0496","esprod0420", "euprod0001", "usprod1022", "cnprod1001")
+request_iprod <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(iprod))
+colnames(request_iprod) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
+iprod_nocn <- as.xts(request_iprod[,1:6])
+iprod_cn <- as.xts(request_iprod[,7])
+iprod_dif <- as.xts(apply(iprod_nocn,2, function(x)  100*(x / lag(x,k=12)-1)), dateFormat="Date") #weird date stuff
+iprod_all <- merge.xts(iprod_dif, iprod_cn )
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-##GDP Dynamic Graph
-dygraph(gdp_dif["200701/"], main = "BIP-Wachstum (QoQ%)", width = 800)%>%
+##Industrial production Dynamic Graph
+today <- as.character(Sys.Date())
+dygraph(iprod_all["200701/"], main = "Industrieproduketion (YoY%)", width = 800)%>%
   dyAxis("x", drawGrid = FALSE)%>%
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
   dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
   dyCSS("legend.css")%>%
   dyLegend(labelsSeparateLines = TRUE)%>%
-  dyRangeSelector()%>%
+  dyRangeSelector(dateWindow = c("2019-08-01",today))%>%
   dyUnzoom()
 ```
+*Quelle: Flossbach von Storch Research Institute, \n Eurostat, national statistische Ämter*
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##Electricity
@@ -87,7 +101,7 @@ dygraph(week_all_index["201811/"], main = "Stromverbrauch (01.02.2020 = 100)", w
   dyCSS("legend.css")%>%
   dyLegend(labelsSeparateLines = TRUE)%>%
   dySeries(na.omit("China"), stepPlot = TRUE, fillGraph = TRUE, color = "red")%>%
-  dyRangeSelector()%>%
+  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
 *Quelle: Flossbach von Storch Research Institute, \n ENTSO-E, EIA, China NEA.*
@@ -137,13 +151,13 @@ colnames(request_trucks) <- c("Index")
 trucks_ma <-  rollapply(request_trucks, 7, mean)
 trucks_ma_index <- as.xts(apply(trucks_ma,2, function(x)  x*100/x["2020-02-01"]))
 
-dygraph(trucks_ma["202002/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = 800)%>%
+dygraph(trucks_ma["201902/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = 800)%>%
 dyAxis("x", drawGrid = FALSE)%>% 
 dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
 dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
 dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyCSS("legend.css")%>%
-dyRangeSelector()%>%
+  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
 *Quelle: Flossbach von Storch Research Institute, \n Statistisches Bundesamt.*
@@ -186,22 +200,22 @@ airbnb_ts <- ts_xts(hh)
 
 airbnb_week <-  rollapply(hotels_ts, 7, mean)
 
-dygraph(hotels_week["20200201/"], main = "Google Trends: 'Hotel'", width = 800)%>%
+dygraph(hotels_week["20190201/"], main = "Google Trends: 'Hotel'", width = 800)%>%
 dyAxis("x", drawGrid = FALSE)%>%
 dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
 dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
 dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyCSS("legend.css")%>%
-  dyRangeSelector()%>%
+    dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 
-dygraph(airbnb_week["20200201/"], main = "Google Trends: 'Airbnb'", width = 800)%>%
+dygraph(airbnb_week["20190201/"], main = "Google Trends: 'Airbnb'", width = 800)%>%
 dyAxis("x", drawGrid = FALSE)%>%
 dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
 dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
 dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyCSS("legend.css")%>%
-  dyRangeSelector()%>%
+    dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 
 ```
@@ -223,13 +237,13 @@ us_week <-  rollapply(us_ts, 7, mean)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-dygraph(us_week["20200101/"], main = "Google Trends: Suchergebnisse in den USA", width = 800)%>%
+dygraph(us_week["20190101/"], main = "Google Trends: Suchergebnisse in den USA", width = 800)%>%
   dyAxis("x", drawGrid = FALSE)%>%
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
   dyOptions(colors = c("black","maroon", "gray", "navy"))%>%
   dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyCSS("legend.css")%>%
-dyRangeSelector()%>%
+  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
 *Quelle: Flossbach von Storch Research Institute, \n Google Trends*
@@ -249,13 +263,26 @@ germany_week <-  rollapply(germany_ts, 7, mean)
 ```
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
-dygraph(germany_week["20200201/"], main = "Google Trends: weitere Ergebnisse in Deutschland", width = 800)%>%
+dygraph(germany_week["20190201/"], main = "Google Trends: weitere Ergebnisse in Deutschland", width = 800)%>%
   dyAxis("x", drawGrid = FALSE)%>%
   dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
   dyOptions(colors = c("black","maroon", "gray", "navy"))%>%
 dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyCSS("legend.css")%>%
-dyRangeSelector()%>%
+  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
 *Quelle: Flossbach von Storch Research Institute, \n Google Trends*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##GDP Dynamic Graph
+dygraph(gdp_dif["200001/"], main = "BIP-Wachstum (QoQ%)", width = 800)%>%
+  dyAxis("x", drawGrid = FALSE)%>%
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
+  dyCSS("legend.css")%>%
+  dyLegend(labelsSeparateLines = TRUE)%>%
+    dyRangeSelector(dateWindow = c("2018-08-01","2020-04-01"))%>%
+  dyUnzoom()
+```
+*Quelle: Flossbach von Storch Research Institute, \n Eurostat, national statistische Ämter*
