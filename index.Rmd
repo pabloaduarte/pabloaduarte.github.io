@@ -16,7 +16,7 @@ library(htmltools)
 library(dygraphs)
 #library(gridExtra)
 ```
-#### Die **Industrieproduktion** in **China** wuchs im April 3.9% (YoY) und in den **USA** sank sie um 11.25%. Den schwersten Einbruch erlitt im März **Italien** mit -28% (YoY). In der **Eurozone** ging die Industriproduktion um 11.25% zurück.  
+#### Im April wuchs die **Industrieproduktion** in **China** um 3.9% (YoY) und in den **USA** sank sie um 11.25%. Den stärksten Einbruch erlitt im März **Italien** mit -28%. In der **Eurozone** ging die Industrieproduktion um 11.34% zurück. Der **Lkw-Maut-Fahrleistungsindex** deutet eine langsame Erholung in Deutschland an. Die Erholung ist allerdings nur ein Drittel so schnell wie der Einbruch.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
 ##GDP
@@ -26,8 +26,6 @@ colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "E
 gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x)-1)))
 index(gdp_dif) <- as.yearqtr(index(gdp_dif))
 index(gdp_dif) <- index(gdp_dif)+(1/4)
-
-
 
 ##Industrial Prod
 iprod <- c("deprod1404","frprod0228","itprod0496","esprod0420", "euprod0001", "usprod1022", "cnprod1001")
@@ -52,6 +50,24 @@ dygraph(iprod_all["200701/"], main = "Industrieproduketion (YoY%)", width = 800)
   dyUnzoom()
 ```
 *Quelle: Flossbach von Storch Research Institute, \n Eurostat, national statistische Ämter*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+trucks <- c("detran0225")
+request_trucks <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(trucks))
+colnames(request_trucks) <- c("Index")
+trucks_ma <-  rollapply(request_trucks, 7, mean)
+trucks_ma_index <- as.xts(apply(trucks_ma,2, function(x)  x*100/x["2020-02-01"]))
+
+dygraph(trucks_ma["201902/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = 800)%>%
+dyAxis("x", drawGrid = FALSE)%>% 
+dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
+dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
+dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
+  dyCSS("legend.css")%>%
+  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
+  dyUnzoom()
+```
+*Quelle: Flossbach von Storch Research Institute, \n Statistisches Bundesamt.*
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -127,6 +143,39 @@ dyRangeSelector()%>%
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##Citiy Moblity Index
+google_w <- c("googledemo1571", "googledemo2189", "googledemo3995", "googledemo2003", "googledemo3131", "googledemo7577")
+
+request_google_w <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_w ))
+colnames(request_google_w ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
+google_week <-  rollapply(request_google_w, 7, mean)
+
+google_station <- c("googledemo1570", "googledemo2002", "googledemo3130", "googledemo3994", "googledemo2188", "googledemo7576")
+request_google_station <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_station))
+colnames(request_google_station ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
+google_stationeek <-  rollapply(request_google_station, 7, mean)
+
+dygraph(google_week["202003/"], main = "Google Community Mobility Reports: \n Arbeitsplätze", width = 800)%>%
+dyAxis("x", drawGrid = FALSE)%>% 
+dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
+dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
+dyCSS("legend.css")%>%
+  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
+dyRangeSelector()%>%
+  dyUnzoom()
+
+dygraph(google_stationeek["202003/"], main = "Google Mobility Reports: \n Bahnhöfe und Haltestellen", width = 800)%>%
+dyAxis("x", drawGrid = FALSE)%>% 
+dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
+dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
+dyCSS("legend.css")%>%
+  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
+dyRangeSelector()%>%
+  dyUnzoom()
+```
+*Quelle: Flossbach von Storch Research Institute, \n Google COVID-19 Community Mobility Reports*
+
+```{r echo=FALSE, message= FALSE, warning=FALSE}
+##Citiy Moblity Index
 mobility<- c("citmap0014", "citmap0024", "citmap0025", "citmap0027", "citmap0010", "citmap0020", "citmap0016", "citmap0013")
 
 request_mobility <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(mobility))
@@ -143,24 +192,6 @@ dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
 ```
 *Quelle: Flossbach von Storch Research Institute, \n [Citymapper Mobility Index](https://citymapper.com/cmi/about)*
 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-trucks <- c("detran0225")
-request_trucks <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(trucks))
-colnames(request_trucks) <- c("Index")
-trucks_ma <-  rollapply(request_trucks, 7, mean)
-trucks_ma_index <- as.xts(apply(trucks_ma,2, function(x)  x*100/x["2020-02-01"]))
-
-dygraph(trucks_ma["201902/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, \n Statistisches Bundesamt.*
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
