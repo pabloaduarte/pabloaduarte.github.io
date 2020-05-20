@@ -16,7 +16,7 @@ library(htmltools)
 library(dygraphs)
 #library(gridExtra)
 ```
-#### Im April wuchs die **Industrieproduktion** in **China** um 3.9% (YoY) und in den **USA** sank sie um 11.25%. Den stärksten Einbruch erlitt im März **Italien** mit -28%. In der **Eurozone** ging die Industrieproduktion um 11.34% zurück. Der **Lkw-Maut-Fahrleistungsindex** deutet eine langsame Erholung in Deutschland an. Die Erholung ist allerdings nur ein Drittel so schnell wie der Einbruch.
+#### Im April wuchs die **Industrieproduktion** in **China** um 3.9% (YoY) und in den **USA** sank sie um 11.25%. Den stärksten Einbruch erlitt im März **Italien** mit -28%. In der **Eurozone** ging die Industrieproduktion um 11.34% zurück. Die Erholung des **Lkw-Maut-Fahrleistungsindizes** ist nur ein Drittel so schnell wie der Einbruch im März.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
 ##GDP
