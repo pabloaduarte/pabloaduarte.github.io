@@ -49,7 +49,7 @@ dygraph(iprod_all["200701/"], main = "Industrieproduketion (YoY%)", width = 800)
   dyRangeSelector(dateWindow = c("2019-08-01",today))%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Eurostat, national statistische Ämter*
+*Quelle: Flossbach von Storch Research Institute, /n Eurostat, national statistische Ämter*
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 trucks <- c("detran0225")
@@ -67,7 +67,7 @@ dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Statistisches Bundesamt.*
+*Quelle: Flossbach von Storch Research Institute, /n Statistisches Bundesamt.*
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -120,7 +120,7 @@ dygraph(week_all_index["201811/"], main = "Stromverbrauch (01.02.2020 = 100)", w
   dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n ENTSO-E, EIA, China NEA.*
+*Quelle: Flossbach von Storch Research Institute, /n ENTSO-E, EIA, China NEA.*
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##China
@@ -139,7 +139,7 @@ dyCSS("cn_legend.css")%>%
 dyRangeSelector()%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n China Nationa Energy Asociation, Association of Automobile Manufacturers, Joint Organisations Data Initiative.*
+*Quelle: Flossbach von Storch Research Institute, /n China Nationa Energy Asociation, Association of Automobile Manufacturers, Joint Organisations Data Initiative.*
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##Citiy Moblity Index
@@ -154,7 +154,7 @@ request_google_station <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefaul
 colnames(request_google_station ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
 google_stationeek <-  rollapply(request_google_station, 7, mean)
 
-dygraph(google_week["202003/"], main = "Google Community Mobility Reports: \n Arbeitsplätze", width = 800)%>%
+dygraph(google_week["202003/"], main = "Google Community Mobility Reports: /n Arbeitsplätze", width = 800)%>%
 dyAxis("x", drawGrid = FALSE)%>% 
 dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
 dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
@@ -163,7 +163,7 @@ dyCSS("legend.css")%>%
 dyRangeSelector()%>%
   dyUnzoom()
 
-dygraph(google_stationeek["202003/"], main = "Google Mobility Reports: \n Bahnhöfe und Haltestellen", width = 800)%>%
+dygraph(google_stationeek["202003/"], main = "Google Mobility Reports: /n Bahnhöfe und Haltestellen", width = 800)%>%
 dyAxis("x", drawGrid = FALSE)%>% 
 dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
 dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
@@ -172,7 +172,7 @@ dyCSS("legend.css")%>%
 dyRangeSelector()%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Google COVID-19 Community Mobility Reports*
+*Quelle: Flossbach von Storch Research Institute, /n Google COVID-19 Community Mobility Reports*
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##Citiy Moblity Index
@@ -190,7 +190,7 @@ dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyRangeSelector()%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n [Citymapper Mobility Index](https://citymapper.com/cmi/about)*
+*Quelle: Flossbach von Storch Research Institute, /n [Citymapper Mobility Index](https://citymapper.com/cmi/about)*
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -200,7 +200,7 @@ keywords=c("hotel")
 #set the geographic area: DE = Germany
 country=c("DE")
 #set the time window
-time <- paste("2019-12-01 ",Sys.Date(), sep = "")
+time <- paste("2018-12-01 ",Sys.Date(), sep = "")
 #set channels 
 channel="web"
 
@@ -210,7 +210,17 @@ hh <- data.frame(hh$date,hh$geo,hh$hits)
 colnames(hh)<-c("time","country","value")
 hotels_ts <- ts_xts(hh)
 
-hotels_week <-  rollapply(hotels_ts, 7, mean)
+#hotels_week <-  rollapply(hotels_ts, 7, mean)
+
+##China Data
+hotel_cn <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/baiduIndex.csv", sep=";"))
+hotel_cn$Hotel <- hotel_cn$Hotel/100
+colnames(hotel_cn) <- c("time", "China")
+hotel_cn <- ts_xts(hotel_cn)
+
+
+hotels <- merge(hotels_ts, hotel_cn)
+hotels_rescale <- as.xts(apply(hotels,2, function(x)  x*100/x["2019-11-03"]))
 
 ##Airbnb
 keywords=c("airbnb")
@@ -231,13 +241,13 @@ airbnb_ts <- ts_xts(hh)
 
 airbnb_week <-  rollapply(hotels_ts, 7, mean)
 
-dygraph(hotels_week["20190201/"], main = "Google Trends: 'Hotel'", width = 800)%>%
+dygraph(hotels_rescale["20190201/"], main = "Google Trends: 'Hotel'", width = 800)%>%
 dyAxis("x", drawGrid = FALSE)%>%
 dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
+dyOptions(colors = c("black","maroon", "gray", "navy", "orange", "red"))%>%
 dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyCSS("legend.css")%>%
-    dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
+    dyRangeSelector(dateWindow = c("2019-11-03",today))%>%
   dyUnzoom()
 
 #dygraph(airbnb_week["20190201/"], main = "Google Trends: 'Airbnb'", width = 800)%>%
@@ -250,7 +260,7 @@ dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
 #  dyUnzoom()
 
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Google Trends*
+*Quelle: Flossbach von Storch Research Institute, /n Google Trends, BaiduIndex*
 
 ```{r echo=FALSE, results= "hide", message=FALSE, warning=FALSE}
 keywords=c("flight","booking","reservation","restaurant")
@@ -277,7 +287,7 @@ dygraph(us_week["20190101/"], main = "Google Trends: Suchergebnisse in den USA",
   dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Google Trends*
+*Quelle: Flossbach von Storch Research Institute, /n Google Trends*
 
 ```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
 keywords=c("flug","bahn","reservierung","restaurant")
@@ -303,7 +313,7 @@ dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
   dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Google Trends*
+*Quelle: Flossbach von Storch Research Institute, /n Google Trends*
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##GDP Dynamic Graph
@@ -316,4 +326,4 @@ dygraph(gdp_dif["200001/"], main = "BIP-Wachstum (QoQ%)", width = 800)%>%
     dyRangeSelector(dateWindow = c("2018-08-01","2020-04-01"))%>%
   dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, \n Eurostat, national statistische Ämter*
+*Quelle: Flossbach von Storch Research Institute, /n Eurostat, national statistische Ämter*
