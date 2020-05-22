@@ -240,14 +240,14 @@ dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
     dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
   dyUnzoom()
 
-dygraph(airbnb_week["20190201/"], main = "Google Trends: 'Airbnb'", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>%
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-    dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
+#dygraph(airbnb_week["20190201/"], main = "Google Trends: 'Airbnb'", width = 800)%>%
+#dyAxis("x", drawGrid = FALSE)%>%
+#dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+#dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
+#dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
+#  dyCSS("legend.css")%>%
+#  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
+#  dyUnzoom()
 
 ```
 *Quelle: Flossbach von Storch Research Institute, \n Google Trends*
