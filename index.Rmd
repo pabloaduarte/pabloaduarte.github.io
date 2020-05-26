@@ -1,5 +1,5 @@
 ---
-title: 'Real Economy Tracker'
+title: "Real Economy Tracker"
 ---
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
