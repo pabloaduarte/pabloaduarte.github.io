@@ -5,14 +5,14 @@ title: "About"
 Dieses Pilotprojekt ist eine Zusammenarbeit von Ökonomen, die relevante Informationen zur Entwicklung der Realwirtschaft anhand öffentlicher Daten zusammenfügen und bereitstellen wollen. 
 
 <center> 
-####  Mitwirkende 
-
-[Dr. Pablo Duarte ](https://www.flossbachvonstorch-researchinstitute.com/en/about-us/team/)
-
-[Dr. Jingjing Lyu](https://www.wiwi.uni-muenster.de/oeew/de/dr-jingjing-lyu)
-</center>
-
 #### Kontakt
 info (_at_) real-economy (_punkt_) de
 
 
+####  Mitwirkende 
+<a href="https://www.flossbachvonstorch-researchinstitute.com/en/about-us/team/" target="_blank">Dr. Pablo Duarte</a>
+
+<a href="https://www.wiwi.uni-muenster.de/oeew/de/dr-jingjing-lyu" target="_blank">Dr. Jingjing Lyu</a>
+
+
+</center>
