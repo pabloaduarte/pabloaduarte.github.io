@@ -1,6 +1,10 @@
 ---
-title: "Real Economy Tracker"
+title: ""
 ---
+<style>
+  body {background-color:rgba(250, 250, 250)}
+</style>
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##R Preamble
@@ -10,320 +14,60 @@ library(zoo)
 library(xts)
 library(tsbox)
 library(ggplot2)
-#library(plotly)
+library(plotly)
 library(htmlwidgets)
 library(htmltools)
 library(dygraphs)
-#library(gridExtra)
-```
-#### Im April wuchs die **Industrieproduktion** in **China** um 3.9% (YoY) und in den **USA** sank sie um 11.25%. Den stärksten Einbruch erlitt im März **Italien** mit -28%. In der **Eurozone** ging die Industrieproduktion um 11.34% zurück. Die Erholung des **Lkw-Maut-Fahrleistungsindizes** ist nur ein Drittel so schnell wie der Einbruch im März.
+library(lubridate)
+library(lubridate)
+library(highcharter)
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
-##GDP
-gdp <- c("denaac0152", "frnaac0284", "itnaac0466", "esnaac0097", "eunaac2903", "usnaac0169", "cnnaac0001")
-request_gdp <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp))
-colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
-gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x)-1)))
-index(gdp_dif) <- as.yearqtr(index(gdp_dif))
-index(gdp_dif) <- index(gdp_dif)+(1/4)
+require(foreign)
+factor_de <- ts_df(read.dta("data_graph.dta"))
+factor_ts <- as.xts(factor_de[,1:3], order.by = factor_de$date)
+colnames(factor_ts) <- c("GDP", "I. Production", "Activity Index")
 
-##Industrial Prod
-iprod <- c("deprod1404","frprod0228","itprod0496","esprod0420", "euprod0001", "usprod1022", "cnprod1001")
-request_iprod <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(iprod))
-colnames(request_iprod) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
-iprod_nocn <- as.xts(request_iprod[,1:6])
-iprod_cn <- as.xts(request_iprod[,7])
-iprod_dif <- as.xts(apply(iprod_nocn,2, function(x)  100*(x / lag(x,k=12)-1)), dateFormat="Date") #weird date stuff
-iprod_all <- merge.xts(iprod_dif, iprod_cn )
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-##Industrial production Dynamic Graph
 today <- as.character(Sys.Date())
-dygraph(iprod_all["200701/"], main = "Industrieproduketion (YoY%)", width = 800)%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-  dyRangeSelector(dateWindow = c("2019-08-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter*
+highchart(type = "stock", width = "70%") %>% 
+  hc_title(text = "Real Economy Index: Germany") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+  hc_add_series(factor_ts["200801/"]$`Activity Index`, name = "Activity Index") %>% 
+  #hc_add_series(factor_ts["200004/"]$GDP, id = "gdp") %>%
+  #hc_add_series(factor_ts["200004/"]$`I. Production`, id = "Industrial Production") %>%
+  hc_colors(c("maroon"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_chart(style = list(fontFamily = "Times",
+                        fontWeight = "bold"))
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-trucks <- c("detran0225")
-request_trucks <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(trucks))
-colnames(request_trucks) <- c("Index")
-trucks_ma <-  rollapply(request_trucks, 7, mean)
-trucks_ma_index <- as.xts(apply(trucks_ma,2, function(x)  x*100/x["2020-02-01"]))
-
-dygraph(trucks_ma["201902/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Statistisches Bundesamt.*
-
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-##Electricity
-
-electricity <- c("entso_loa_de_11_q1", "entso_loa_fr_11", "entso_loa_it_11", "entso_loa_es_11")
-request_elec <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(electricity))
-week_elec <-  rollapply(request_elec, 7, mean)
-week_el_index <- as.xts(apply(week_elec,2, function(x)  x*100/x["2020-02-01"]))
-
-colnames(week_el_index) <- c("Deutschland", "Frankreich", "Italien", "Spanien")
-
-##China
-electricity_cn <- c("cnprod0401")
-request_elec_cn <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(electricity_cn))
-week_elec_cn <-  request_elec_cn
-week_el_index_cn <- as.xts(apply(week_elec_cn,2, function(x)  x*100/x["2020-02-01"]))
-
-colnames(week_el_index_cn) <- c("China")
-
-## Merge US DATA
-library(eia)
-mykey <- "b6e4a42a8e85f78a8e1e4fcfd1d7f6dd"
-eia_set_key(mykey)
-id <- "EBA.US48-ALL.D.H"
-d <- eia_series(id, n = 10000)
-
-us_elec <- data.frame(d$data)
-us_elec <- data.frame(us_elec$date,us_elec$value)
-us_elec_ts <- ts_xts(us_elec)
-us_day <- apply.daily(us_elec_ts,mean,1)
-index(us_day)<- as.Date(unlist(lapply(strsplit(as.character(index(us_day))," "), function(x) x[1])))
-
-us_7day <-  rollapply(us_day, 7, mean)
-us_7day_index <- as.xts(apply(us_7day,2, function(x)  x*100/x["2020-02-01"]))
-colnames(us_7day_index) <- c("USA")
-
-week_all_index <- merge(week_el_index, us_7day_index, week_el_index_cn)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-##Dynamic Graph
-dygraph(week_all_index["201811/"], main = "Stromverbrauch (01.02.2020 = 100)", width = 800)%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-  dySeries(na.omit("China"), stepPlot = TRUE, fillGraph = TRUE, color = "red")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, ENTSO-E, EIA, China NEA.*
+require(foreign)
+factor_de <- ts_df(read.dta("data_graph_us.dta"))
+factor_ts <- as.xts(factor_de[,1:3], order.by = factor_de$date)
+colnames(factor_ts) <- c("GDP", "I. Production", "Activity Index")
+today <- as.character(Sys.Date())
 
-```{r echo=FALSE, message= FALSE, warning=FALSE}
-##China
-china<- c("cnprod0401", "cnprod0185", "jodicngsdem_kbd")
-request_cn <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(china))
-index_cn <- as.xts(apply(request_cn,2, function(x)  x*100/x["2019-11-01"]))
-
-colnames(index_cn) <- c("Electricity Consumption", "Vehicle Production", "Gasoline (Motor & Aviation)")
-
-dygraph(index_cn["201701/"], main = "China (November 2019 = 100)", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray"))%>%
-dyCSS("cn_legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-dyRangeSelector()%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, China National Energy Association, Association of Automobile Manufacturers, Joint Organisations Data Initiative.*
-
-```{r echo=FALSE, message= FALSE, warning=FALSE}
-##Citiy Moblity Index
-google_w <- c("googledemo1571", "googledemo2189", "googledemo3995", "googledemo2003", "googledemo3131", "googledemo7577")
-
-request_google_w <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_w ))
-colnames(request_google_w ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
-google_week <-  rollapply(request_google_w, 7, mean)
-
-google_station <- c("googledemo1570", "googledemo2002", "googledemo3130", "googledemo3994", "googledemo2188", "googledemo7576")
-request_google_station <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_station))
-colnames(request_google_station ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
-google_stationeek <-  rollapply(request_google_station, 7, mean)
-
-dygraph(google_week["202003/"], main = "Google Community Mobility Reports: Arbeitsplätze", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
-dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-dyRangeSelector()%>%
-  dyUnzoom()
-
-dygraph(google_stationeek["202003/"], main = "Google Mobility Reports: Bahnhöfe und Haltestellen", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
-dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-dyRangeSelector()%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Google COVID-19 Community Mobility Reports*
-
-```{r echo=FALSE, message= FALSE, warning=FALSE}
-##Citiy Moblity Index
-mobility<- c("citmap0014", "citmap0024", "citmap0025", "citmap0027", "citmap0010", "citmap0020", "citmap0016", "citmap0013")
-
-request_mobility <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(mobility))
-colnames(request_mobility) <- c("Los Angeles", "NYC", "Paris", "Rhine-Ruhr", "Hong-Kong", "Milan", "Madrid", "London")
-
-dygraph(request_mobility["202001/"], main = "Citymapper Mobility Index", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray", "red", "blue", "orange", "green", "navy"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-  dyRangeSelector()%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, [Citymapper Mobility Index](https://citymapper.com/cmi/about)*
-
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-
-library(gtrendsR)
-keywords=c("hotel")
-#set the geographic area: DE = Germany
-country=c("DE")
-#set the time window
-time <- paste("2018-12-01 ",Sys.Date(), sep = "")
-#set channels 
-channel="web"
-
-hotels <- gtrends(keywords, geo = c("DE", "FR", "IT", "ES", "US"), time, onlyInterest=TRUE)
-hh <- hotels$interest_over_time
-hh <- data.frame(hh$date,hh$geo,hh$hits)
-colnames(hh)<-c("time","country","value")
-hotels_ts <- ts_xts(hh)
-
-#hotels_week <-  rollapply(hotels_ts, 7, mean)
-
-##China Data
-hotel_cn <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/baiduIndex.csv", sep=";"))
-hotel_cn$Hotel <- hotel_cn$Hotel/100
-colnames(hotel_cn) <- c("time", "China")
-hotel_cn <- ts_xts(hotel_cn)
-
-
-hotels <- merge(hotels_ts, hotel_cn)
-hotels_rescale <- as.xts(apply(hotels,2, function(x)  x*100/x["2019-11-03"]))
-
-##Airbnb
-keywords=c("airbnb")
-#set the geographic area: DE = Germany
-country=c("DE", "FR", "IT", "ES", "US")
-#set the time window
-##time="2019-12-01 2020-05-12"
-time <- paste("2019-12-01 ",Sys.Date(), sep = "")
-
-#set channels 
-channel="web"
-
-airbnb <- gtrends(keywords, geo = country, time, onlyInterest=TRUE)
-hh <- airbnb$interest_over_time
-hh <- data.frame(hh$date,hh$geo,hh$hits)
-colnames(hh)<-c("time","country","value")
-airbnb_ts <- ts_xts(hh)
-
-airbnb_week <-  rollapply(hotels_ts, 7, mean)
-
-dygraph(hotels_rescale["20190201/"], main = "Google Trends: 'Hotel'", width = 800)%>%
-dyAxis("x", drawGrid = FALSE)%>%
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-dyOptions(colors = c("black","maroon", "gray", "navy", "orange", "red"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-    dyRangeSelector(dateWindow = c("2019-11-03",today))%>%
-  dyUnzoom()
-
-#dygraph(airbnb_week["20190201/"], main = "Google Trends: 'Airbnb'", width = 800)%>%
-#dyAxis("x", drawGrid = FALSE)%>%
-#dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-#dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
-#dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-#  dyCSS("legend.css")%>%
-#  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-#  dyUnzoom()
+today <- as.character(Sys.Date())
+highchart(type = "stock", width = "70%") %>% 
+  hc_title(text = "Real Economy Index: USA") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+  hc_add_series(factor_ts["200801/"]$`Activity Index`, name  = "Activity Index") %>% 
+  #hc_add_series(factor_ts["200004/"]$GDP, id = "gdp") %>%
+  #hc_add_series(factor_ts["200004/"]$`I. Production`, id = "Industrial Production") %>%
+  hc_colors(c("maroon", "black", "navy"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_chart(style = list(fontFamily = "Times",
+                        fontWeight = "bold"))
 
 ```
-*Quelle: Flossbach von Storch Research Institute, Google Trends, BaiduIndex*
 
-```{r echo=FALSE, results= "hide", message=FALSE, warning=FALSE}
-keywords=c("flight","booking","reservation","restaurant")
-#set the time window
-us <- sapply(keywords, function(x) gtrends(x, geo = "DE", time, onlyInterest=TRUE))
-us_l<- data.frame(us$flight.interest_over_time$hits,
-                     us$booking.interest_over_time$hits,us$reservation.interest_over_time$hits,
-                     us$restaurant.interest_over_time$hits)
-colnames(us_l) <- keywords
-head(us_l)
+*Please read this [Technical Note](https://www.flossbachvonstorch-researchinstitute.com/fileadmin/user_upload/RI/Kommentare/files/200625-fvs-real-economy-index-technical-note.pdf) for details on the construction of the index*.
 
-us_ts <- as.xts(us_l, order.by =us$flight.interest_over_time$date )
 
-us_week <-  rollapply(us_ts, 7, mean)
-```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-dygraph(us_week["20190101/"], main = "Google Trends: Suchergebnisse in den USA", width = 800)%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy"))%>%
-  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Google Trends*
-
-```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
-keywords=c("flug","bahn","reservierung","restaurant")
-#set the time window
-germany <- sapply(keywords, function(x) gtrends(x, geo = "DE", time, onlyInterest=TRUE))
-germany_l<- data.frame(germany$flug.interest_over_time$hits,
-                     germany$bahn.interest_over_time$hits,germany$reservierung.interest_over_time$hits,germany$restaurant.interest_over_time$hits)
-colnames(germany_l) <- keywords
-head(germany_l)
-
-germany_ts <- as.xts(germany_l, order.by =germany$flug.interest_over_time$date )
-
-germany_week <-  rollapply(germany_ts, 7, mean)
-```
-
-```{r echo=FALSE, message= FALSE, warning=FALSE}
-dygraph(germany_week["20190201/"], main = "Google Trends: weitere Ergebnisse in Deutschland", width = 800)%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Google Trends*
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-##GDP Dynamic Graph
-dygraph(gdp_dif["200001/"], main = "BIP-Wachstum (QoQ%)", width = 800)%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-    dyRangeSelector(dateWindow = c("2018-08-01","2020-04-01"))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter*
