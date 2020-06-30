@@ -1,10 +1,14 @@
 name: "Real Economy Tracker"
 output_dir: "."
 navbar:
-  title: ""
+  title: "Real Economy Tracker"
   left: 
-    - text: "Home"
+    - text: "Real Activity Index"
       href: index.html
+    - text: "Hard Data"
+      href: hard_data.html
+    - text: "Internet Data"
+      href: internet_data.html
     - text: "About"
       href: about.html
       
