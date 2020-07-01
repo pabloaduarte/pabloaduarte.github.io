@@ -3,7 +3,7 @@ output_dir: "."
 navbar:
   title: "Real Economy Tracker"
   left: 
-    - text: "Real Activity Index"
+    - text: "Real Economy Index"
       href: index.html
     - text: "Hard Data"
       href: hard_data.html
@@ -15,3 +15,4 @@ navbar:
 output:
   html_document: 
    theme: flatly
+   self_contained: FALSE

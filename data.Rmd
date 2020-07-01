@@ -1,5 +1,0 @@
----
-title: "Data"
----
-
-The data comes from public sources.

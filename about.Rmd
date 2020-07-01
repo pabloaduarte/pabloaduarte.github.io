@@ -2,7 +2,7 @@
 title: "About"
 ---
 
-Dieses Pilotprojekt ist eine Zusammenarbeit von Ökonomen, die relevante Informationen zur Entwicklung der Realwirtschaft anhand öffentlicher Daten zusammenfügen und bereitstellen wollen. 
+Dieses Pilotprojekt des [Flossbach von Storch Research Institute](https://www.flossbachvonstorch-researchinstitute.com/de/) ist eine Zusammenarbeit von Ökonomen, die relevante Informationen zur Entwicklung der Realwirtschaft anhand öffentlicher Daten zusammenfügen und bereitstellen wollen. 
 
 <center> 
 #### Kontakt

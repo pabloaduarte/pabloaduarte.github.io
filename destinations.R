@@ -68,32 +68,3 @@ p + theme(plot.title = element_text(hjust = 0.5))
 ggsave("tourist_dest.png")
 
 
-###Insolvenz
-time <- paste("2019-10-01 ",Sys.Date(), sep = "")
-keywords <- c("insolvenz")
-insolvenz <- gtrends(keywords, geo = "DE", time, onlyInterest=TRUE)
-hh <- insolvenz$interest_over_time
-hh <- data_frame(hh$date,hh$geo,hh$hits)
-colnames(hh)<-c("time","country","value")
-write.table(hh, file="C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/insolvenz.csv",sep=",",row.names=F)
-
-head(hh)
-insolvenz_ts <- ts_xts(hh)
-
-insolvenz_week <-  rollapply(insolvenz_ts, 7, mean)
-
-p<- autoplot.zoo(insolvenz_week["201901/"], facets = NULL, main = "") +
-  aes(linetype = Series, size=Series) + 
-  scale_color_manual(values=c("black","maroon", "gray", "navy", "blue", "red", "orange")) +
-  scale_size_manual(values = c(0.7, 0.7, 0.7, 0.7, 0.7,0.7,0.7))+
-  theme_bw() +xlab("") + 
-  theme(legend.title = element_blank())+
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
-  labs(title = "Google Trends: Insolvenz",
-       caption = "7-Tages-Durchschnitte. \n Quelle: Flossbach von Storch Research Institute, \n Google Trends")
-
-p + theme(plot.title = element_text(hjust = 0.5))
-ggsave("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/insolvenz.jpg")
-
-write.table(hh, file="C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/insolvenz.csv",sep=",",row.names=F)
-
