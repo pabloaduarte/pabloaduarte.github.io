@@ -15,4 +15,5 @@ navbar:
 output:
   html_document: 
    theme: flatly
-   self_contained: FALSE
+   self_contained: TRUE
+   fontFamily: "BigVesta"
