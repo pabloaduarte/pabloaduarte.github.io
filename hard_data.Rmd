@@ -19,6 +19,7 @@ library(htmlwidgets)
 library(htmltools)
 library(dygraphs)
 library(lubridate)
+library(highcharter)
 #library(gridExtra)
 ```
 
@@ -74,7 +75,7 @@ p <- ggplot(elec_seas, aes(as.Date(yday(time)),
         labs(x="Month", colour="Year") +
         theme_classic()+
         scale_x_date(date_labels = "%b")+
-       scale_color_manual(values=c("maroon", "gray", "navy", "blue", "red", "black")) +
+       scale_color_manual(values=c("maroon", "gray", "navy", "orange", "red", "black")) +
        scale_size_manual(values = c(0.7, 0.7, 0.7, 0.7, 0.7,1.5))+
        theme_bw() +xlab("") + ylab("MWh, 02.06.2019 = 100")+
        theme(legend.title = element_blank())+
@@ -98,7 +99,7 @@ p <- ggplot(elec_seas, aes(as.Date(yday(time)),
         labs(x="Month", colour="Year") +
         theme_classic()+
         scale_x_date(date_labels = "%b")+
-       scale_color_manual(values=c("maroon", "gray", "navy", "blue", "red", "black")) +
+       scale_color_manual(values=c("maroon", "gray", "navy", "orange", "red", "black")) +
        scale_size_manual(values = c(0.7, 0.7, 0.7, 0.7, 0.7,1.5))+
        theme_bw() +xlab("") + ylab("MWh, 02.06.2019 = 100")+
        theme(legend.title = element_blank())+
@@ -124,7 +125,7 @@ p <- ggplot(elec_seas, aes(as.Date(yday(time)),
         labs(x="Month", colour="Year") +
         theme_classic()+
         scale_x_date(date_labels = "%b")+
-       scale_color_manual(values=c("maroon", "gray", "navy", "blue", "red", "black")) +
+       scale_color_manual(values=c("maroon", "gray", "navy", "orange", "red", "black")) +
        scale_size_manual(values = c(0.7, 0.7, 0.7, 0.7, 0.7,1.5))+
        theme_bw() +xlab("") + ylab("MWh, 02.06.2019 = 100")+
        theme(legend.title = element_blank())+
@@ -150,7 +151,7 @@ p <- ggplot(elec_seas, aes(as.Date(yday(time)),
         labs(x="Month", colour="Year") +
         theme_classic()+
         scale_x_date(date_labels = "%b")+
-       scale_color_manual(values=c("maroon", "gray", "navy", "blue", "red", "black")) +
+       scale_color_manual(values=c("maroon", "gray", "navy", "orange", "red", "black")) +
        scale_size_manual(values = c(0.7, 0.7, 0.7, 0.7, 0.7,1.7))+
        theme_bw() +xlab("") + ylab("MWh, 02.06.2019 = 100")+
        theme(legend.title = element_blank())+
@@ -170,8 +171,8 @@ gdp <- c("denaac0152", "frnaac0284", "itnaac0466", "esnaac0097", "eunaac2903", "
 request_gdp <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp))
 colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
 gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x)-1)))
-index(gdp_dif) <- as.yearqtr(index(gdp_dif))
-index(gdp_dif) <- index(gdp_dif)+(1/4)
+#index(gdp_dif) <- as.yearqtr(index(gdp_dif))
+#index(gdp_dif) <- index(gdp_dif)+(1/4)
 
 ##Industrial Prod
 iprod <- c("deprod1404","frprod0228","itprod0496","esprod0420", "euprod0001", "usprod1022", "cnprod1001")
@@ -179,7 +180,7 @@ request_iprod <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(iprod))
 colnames(request_iprod) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
 iprod_nocn <- as.xts(request_iprod[,1:6])
 iprod_cn <- as.xts(request_iprod[,7])
-iprod_dif <- as.xts(apply(iprod_nocn,2, function(x)  100*(x / lag(x,k=12)-1)), dateFormat="Date") #weird date stuff
+iprod_dif <- as.xts(apply(iprod_nocn,2, function(x)  100*(x / lag(x,n=12L)-1)), dateFormat="Date") #weird date stuff
 iprod_all <- merge.xts(iprod_dif, iprod_cn )
 ```
 
@@ -200,45 +201,106 @@ cpi_all <- merge.xts(cpi_dif, cpi_cn_dif)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##GDP Dynamic Graph
-dygraph(gdp_dif["200001/"], main = "BIP-Wachstum (QoQ%)", width = "80%")%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-    dyRangeSelector(dateWindow = c("2018-08-01","2020-04-01"))%>%
-  dyUnzoom()
+p_gdp <- highchart(type = "stock" ) %>% 
+  hc_title(text = "BIP-Wachstum (QoQ%)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(gdp_dif["200001/"]$Deutschland, name ="Deutschland") %>% 
+  hc_add_series(gdp_dif["200001/"]$Frankreich, name = "Frankreich" ) %>% 
+  hc_add_series(gdp_dif["200001/"]$Italien, name = "Italien") %>% 
+  hc_add_series(gdp_dif["200001/"]$Spanien, name = "Spanien") %>% 
+  hc_add_series(gdp_dif["200001/"]$USA, name = "USA") %>%
+  hc_add_series(gdp_dif["200001/"]$China, name = "China") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+#dygraph(gdp_dif["200001/"], main = "BIP-Wachstum (QoQ%)", width = "80%")%>%
+ # dyAxis("x", drawGrid = FALSE)%>%
+ # dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+ # dyOptions(colors = c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  #dyCSS("legend.css")%>%
+  #dyLegend(labelsSeparateLines = TRUE)%>%
+  #  dyRangeSelector(dateWindow = c("2018-08-01","2020-04-01"))%>%
+  #dyUnzoom()
+p_gdp
+saveWidget(p_gdp, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_gdp.html", background = "rgba(250, 250, 250)")
 ```
-*Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter*
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##Industrial production Dynamic Graph
-today <- as.character(Sys.Date())
-dygraph(iprod_all["200701/"], main = "Industrieproduketion (YoY%)", width = "80%")%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-  dyRangeSelector(dateWindow = c("2019-08-01",today))%>%
-  dyUnzoom()
+
+p_iprod <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Industrieproduketion (YoY%)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute,Eurostat, nationale statistische Ämter") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(iprod_all["200001/"]$Deutschland, name ="Deutschland") %>% 
+  hc_add_series(iprod_all["200001/"]$Frankreich, name = "Frankreich" ) %>% 
+  hc_add_series(iprod_all["200001/"]$Italien, name = "Italien") %>% 
+  hc_add_series(iprod_all["200001/"]$Spanien, name = "Spanien") %>% 
+  hc_add_series(iprod_all["200001/"]$USA, name = "USA") %>%
+  hc_add_series(iprod_all["200001/"]$China, name = "China") %>% 
+
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_iprod
+saveWidget(p_iprod, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_iprod.html", background = "rgba(250, 250, 250)")
+
+
+#today <- as.character(Sys.Date())
+#dygraph(iprod_all["200701/"], main = "Industrieproduketion (YoY%)", width = "80%")%>%
+ # dyAxis("x", drawGrid = FALSE)%>%
+  #dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+  #dyOptions(colors = c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  #dyCSS("legend.css")%>%
+  #dyLegend(labelsSeparateLines = TRUE)%>%
+  #dyRangeSelector(dateWindow = c("2019-08-01",today))%>%
+  #dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter*
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##CPI Dynamic
-today <- as.character(Sys.Date())
-dygraph(cpi_all["200701/"], main = "Verbraucherpreisindex (YoY%)", width = "80%")%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-  dyRangeSelector(dateWindow = c("2018-11-01",today))%>%
-  dyUnzoom()
-```
-*Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter*
+p_cpi <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Verbraucherpreisindex (YoY%)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(cpi_all["200001/"]$Deutschland, name ="Deutschland") %>% 
+  hc_add_series(cpi_all["200001/"]$Frankreich, name = "Frankreich" ) %>% 
+  hc_add_series(cpi_all["200001/"]$Italien, name = "Italien") %>% 
+  hc_add_series(cpi_all["200001/"]$Spanien, name = "Spanien") %>% 
+  hc_add_series(cpi_all["200001/"]$USA, name = "USA") %>%
+  hc_add_series(cpi_all["200001/"]$China, name = "China") %>% 
 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_cpi
+saveWidget(p_cpi, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_cpi.html", background = "rgba(250, 250, 250)")
+
+#today <- as.character(Sys.Date())
+#dygraph(cpi_all["200701/"], main = "Verbraucherpreisindex (YoY%)", width = "80%")%>%
+ # dyAxis("x", drawGrid = FALSE)%>%
+#  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+#  dyOptions(colors = c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+#  dyCSS("legend.css")%>%
+#  dyLegend(labelsSeparateLines = TRUE)%>%
+#  dyRangeSelector(dateWindow = c("2018-11-01",today))%>%
+#  dyUnzoom()
+```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 trucks <- c("detran0225")
@@ -247,16 +309,32 @@ colnames(request_trucks) <- c("Index")
 trucks_ma <-  rollapply(request_trucks, 7, mean)
 trucks_ma_index <- as.xts(apply(trucks_ma,2, function(x)  x*100/x["2020-02-01"]))
 
-dygraph(trucks_ma["201902/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = "80%")%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
-dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-  dyCSS("legend.css")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
+
+p_trucks <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Lkw-Maut-Fahrleistungsindex: Deutschland (02.2020 = 100)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Statistisches Bundesamt.") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(trucks_ma_index, name ="") %>% 
+    hc_colors(c("maroon","black", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 1) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_trucks
+saveWidget(p_trucks, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_trucks.html", background = "rgba(250, 250, 250)")
+
+#dygraph(trucks_ma["201902/"], main = "Lkw-Maut-Fahrleistungsindex: Deutschland", width = "80%")%>%
+#dyAxis("x", drawGrid = FALSE)%>% 
+#dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
+#dyOptions(colors = c("black","maroon", "gray", "navy", "orange"))%>%
+#dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
+ # dyCSS("legend.css")%>%
+ # dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
+ # dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, Statistisches Bundesamt.*
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -295,21 +373,45 @@ us_7day_index <- as.xts(apply(us_7day,2, function(x)  x*100/x["2020-02-01"]))
 colnames(us_7day_index) <- c("USA")
 
 week_all_index <- merge(week_el_index, us_7day_index, week_el_index_cn)
+week_all_index <-  rollapply(week_all_index, 52, mean)
+
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##Dynamic Graph
-dygraph(week_all_index["201811/"], main = "Stromverbrauch (01.02.2020 = 100)", width = "80%")%>%
-  dyAxis("x", drawGrid = FALSE)%>%
-  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
-  dyOptions(colors = c("black","maroon", "gray", "navy", "blue", "red"))%>%
-  dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE)%>%
-  dySeries(na.omit("China"), stepPlot = TRUE, fillGraph = TRUE, color = "red")%>%
-  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
-  dyUnzoom()
+
+p_elec <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Stromverbrauch (01.02.2020 = 100)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, ENTSO-E, EIA, China NEA. Wochendurchschnitte.") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(week_all_index$Deutschland["201601/"], name ="Deutschland") %>% 
+  hc_add_series(week_all_index$Frankreich["201601/"], name = "Frankreich" ) %>% 
+  hc_add_series(week_all_index$Italien["201601/"], name = "Italien") %>% 
+  hc_add_series(week_all_index$Spanien["201601/"], name = "Spanien") %>% 
+  hc_add_series(week_all_index$USA["201601/"], name = "USA") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_elec
+saveWidget(p_elec, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_elec.html", background = "rgba(250, 250, 250)")
+
+
+
+#dygraph(week_all_index["201811/"], main = "Stromverbrauch (01.02.2020 = 100)", width = "80%")%>%
+ # dyAxis("x", drawGrid = FALSE)%>%
+#  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))%>%
+#  dyOptions(colors = c("black","maroon", "gray", "navy", "orange", "red"))%>%
+#  dyCSS("legend.css")%>%
+#  dyLegend(labelsSeparateLines = TRUE)%>%
+#  dySeries(na.omit("China"), stepPlot = TRUE, fillGraph = TRUE, color = "red")%>%
+#  dyRangeSelector(dateWindow = c("2020-02-01",today))%>%
+ # dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, ENTSO-E, EIA, China NEA.*
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##China
@@ -317,15 +419,36 @@ china<- c("cnprod0401", "cnprod0185", "jodicngsdem_kbd")
 request_cn <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(china))
 index_cn <- as.xts(apply(request_cn,2, function(x)  x*100/x["2019-11-01"]))
 
-colnames(index_cn) <- c("Electricity Consumption", "Vehicle Production", "Gasoline (Motor & Aviation)")
+colnames(index_cn) <- c("Electricity", "Vehicle", "Gasoline")
+index_cn <-  rollapply(index_cn, 12, mean)
 
-dygraph(index_cn["201701/"], main = "China (November 2019 = 100)", width = "80%")%>%
-dyAxis("x", drawGrid = FALSE)%>% 
-dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
-dyOptions(colors = c("black","maroon", "gray"))%>%
-dyCSS("legend.css")%>%
-  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
-dyRangeSelector()%>%
-  dyUnzoom()
+
+p_china <- highchart(type = "stock" ) %>% 
+  hc_title(text = "China (November 2019 = 100)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, China National Energy Association, Association of Automobile Manufacturers, Joint Organisations Data Initiative. Jahresdurchschnitte.") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(index_cn$Electricity["200501/"], name ="Electricity Consumption") %>% 
+  hc_add_series(index_cn$Vehicle["200501/"], name = "Vehicle Production" ) %>% 
+  hc_add_series(index_cn$Gasoline["200501/"], name = "Gasoline (Motor & Aviation)") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 6) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_china
+saveWidget(p_china, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_china.html", background = "rgba(250, 250, 250)")
+
+
+#dygraph(index_cn["201701/"], main = "China (November 2019 = 100)", width = "80%")%>%
+#dyAxis("x", drawGrid = FALSE)%>% 
+#dyHighlight(highlightSeriesOpts = list(strokeWidth = 2))%>%
+#dyOptions(colors = c("black","maroon", "gray"))%>%
+#dyCSS("legend.css")%>%
+#  dyLegend(labelsSeparateLines = TRUE, show = "always")%>%
+#dyRangeSelector()%>%
+ # dyUnzoom()
 ```
-*Quelle: Flossbach von Storch Research Institute, China National Energy Association, Association of Automobile Manufacturers, Joint Organisations Data Initiative.*
+

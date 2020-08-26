@@ -23,48 +23,151 @@ library(lubridate)
 library(highcharter)
 
 require(foreign)
-factor_de <- ts_df(read.dta("data_graph.dta"))
-factor_ts <- as.xts(factor_de[,1:3], order.by = factor_de$date)
-colnames(factor_ts) <- c("GDP", "I. Production", "Activity Index")
+factor_de <- ts_df(read.dta("data_graph_de.dta"))
+factor_de_ts <- as.xts(factor_de[,1:4], order.by = factor_de$date)
+colnames(factor_de_ts) <- c("GDP", "I. Production", "Germany", "Activity Index2")
 
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 today <- as.character(Sys.Date())
-highchart(type = "stock", width = "70%") %>% 
+f_de <- highchart(type = "stock") %>% 
   hc_title(text = "Real Economy Index: Germany") %>% 
  hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
-   hc_exporting(enabled = TRUE) %>%
-  hc_add_series(factor_ts["200801/"]$`Activity Index`, name = "Activity Index") %>% 
-  #hc_add_series(factor_ts["200004/"]$GDP, id = "gdp") %>%
-  #hc_add_series(factor_ts["200004/"]$`I. Production`, id = "Industrial Production") %>%
-  hc_colors(c("maroon"))%>%
+ hc_exporting(enabled = TRUE) %>%
+    hc_legend(enabled = TRUE) %>%
+  hc_add_series(factor_de_ts["200801/"]$Germany, name = "Activity Index", showInLegend = TRUE) %>%
+  hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
+  hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
+  hc_colors(c("maroon", "navy", "gray"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
-  hc_chart(style = list(fontFamily = "Times",
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
 
+f_de
+
+
+saveWidget(f_de, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_de.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 require(foreign)
-factor_de <- ts_df(read.dta("data_graph_us.dta"))
-factor_ts <- as.xts(factor_de[,1:3], order.by = factor_de$date)
-colnames(factor_ts) <- c("GDP", "I. Production", "Activity Index")
+factor_us <- ts_df(read.dta("data_graph_us.dta"))
+factor_us_ts <- as.xts(factor_us[,1:3], order.by = factor_us$date)
+colnames(factor_us_ts) <- c("GDP", "I. Production", "USA")
 today <- as.character(Sys.Date())
 
 today <- as.character(Sys.Date())
-highchart(type = "stock", width = "70%") %>% 
+f_us <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index: USA") %>% 
  hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
-  hc_add_series(factor_ts["200801/"]$`Activity Index`, name  = "Activity Index") %>% 
-  #hc_add_series(factor_ts["200004/"]$GDP, id = "gdp") %>%
-  #hc_add_series(factor_ts["200004/"]$`I. Production`, id = "Industrial Production") %>%
-  hc_colors(c("maroon", "black", "navy"))%>%
+    hc_legend(enabled = TRUE) %>%
+  hc_add_series(factor_us_ts["200801/"]$USA, name  = "Activity Index") %>% 
+  hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
+  hc_add_series(factor_us_ts["200001/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
+  hc_colors(c("maroon", "navy", "gray"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
-  hc_chart(style = list(fontFamily = "Times",
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
+f_us
+saveWidget(f_us, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_us.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
+```
 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(foreign)
+factor_fr <- ts_df(read.dta("data_graph_fr.dta"))
+factor_fr_ts <- as.xts(factor_fr[,1:3], order.by = factor_fr$date)
+colnames(factor_fr_ts) <- c("GDP", "I. Production", "France")
+today <- as.character(Sys.Date())
+
+today <- as.character(Sys.Date())
+p_france <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Real Economy Index: France") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+    hc_legend(enabled = TRUE) %>%  hc_add_series(factor_fr_ts["200801/"]$France, name  = "Activity Index") %>% 
+  hc_add_series(factor_fr_ts["200801/"]$GDP, name = "GDP") %>%
+  hc_add_series(factor_fr_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
+  hc_colors(c("orange", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+# p_france
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(foreign)
+factor_it <- ts_df(read.dta("data_graph_it.dta"))
+factor_it_ts <- as.xts(factor_it[,1:3], order.by = factor_it$date)
+colnames(factor_it_ts) <- c("GDP", "I. Production", "Italy")
+today <- as.character(Sys.Date())
+
+today <- as.character(Sys.Date())
+p_italy <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Real Economy Index: Italy") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(factor_it_ts["200801/"]$Italy, name  = "Activity Index") %>% 
+  hc_add_series(factor_it_ts["200801/"]$GDP, name = "GDP") %>%
+  hc_add_series(factor_it_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
+  hc_colors(c("orange", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+#p_italy
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(foreign)
+factor_es <- ts_df(read.dta("data_graph_es.dta"))
+factor_es_ts <- as.xts(factor_es[,1:3], order.by = factor_es$date)
+colnames(factor_es_ts) <- c("GDP", "I. Production", "Spain")
+today <- as.character(Sys.Date())
+
+p_spain <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Real Economy Index: Spain") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(factor_es_ts["200801/"]$Spain, name  = "Activity Index") %>% 
+  hc_add_series(factor_es_ts["200801/"]$GDP, name = "GDP") %>%
+  hc_add_series(factor_es_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
+  hc_colors(c("orange", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+#p_spain
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+indices <- merge(factor_de_ts$Germany, factor_us_ts$USA, factor_fr_ts$France, factor_it_ts$Italy, factor_es_ts$Spain)
+
+p_all <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Real Economy Index") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(indices["200801/"]$Germany, name  = "Germany") %>% 
+  hc_add_series(indices["200801/"]$USA, name  = "USA") %>% 
+  hc_add_series(indices["200801/"]$France, name  = "France") %>% 
+  hc_add_series(indices["200801/"]$Italy, name  = "Italy") %>% 
+  hc_add_series(indices["200801/"]$Spain, name  = "Spain") %>% 
+  hc_colors(c("maroon", "black", "navy", "gray", " orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+ #p_all
+ saveWidget(p_all, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_all.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
 ```
 
 *Please read this [Technical Note](https://www.flossbachvonstorch-researchinstitute.com/fileadmin/user_upload/RI/Kommentare/files/200625-fvs-real-economy-index-technical-note.pdf) for details on the construction of the index*.
