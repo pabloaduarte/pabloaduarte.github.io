@@ -166,7 +166,8 @@ p_all <- highchart(type = "stock" ) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
- #p_all
+
+p_all
  saveWidget(p_all, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_all.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
 ```
 
