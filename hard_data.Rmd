@@ -212,7 +212,8 @@ p_gdp <- highchart(type = "stock" ) %>%
   hc_add_series(gdp_dif["200001/"]$Spanien, name = "Spanien") %>% 
   hc_add_series(gdp_dif["200001/"]$USA, name = "USA") %>%
   hc_add_series(gdp_dif["200001/"]$China, name = "China") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+    hc_add_series(gdp_dif["200001/"]$Eurozone, name = "Eurozone") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
@@ -244,8 +245,9 @@ p_iprod <- highchart(type = "stock" ) %>%
   hc_add_series(iprod_all["200001/"]$Spanien, name = "Spanien") %>% 
   hc_add_series(iprod_all["200001/"]$USA, name = "USA") %>%
   hc_add_series(iprod_all["200001/"]$China, name = "China") %>% 
+   hc_add_series(iprod_all["200001/"]$Eurozone, name = "Eurozone") %>% 
 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
@@ -266,6 +268,38 @@ saveWidget(p_iprod, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_iprod.ht
   #dyRangeSelector(dateWindow = c("2019-08-01",today))%>%
   #dyUnzoom()
 ```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##RETAIL SALES
+ret_sales <- c("detrad1360", "frtrad0310", "itttrad0728", "estrad0382", "ustrad0070", "cntrad0715")
+request_ret_sales <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(ret_sales))
+colnames(request_ret_sales) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "USA", "China")
+ret_sales_noc <- as.xts(request_ret_sales[,1:5])
+ret_sales_noc_dif <- as.xts(apply(ret_sales_noc,2, function(x)  100*(x / lag(x, n=12L)-1)),dateFormat="Date")
+ret_sales_dif <- merge.xts(ret_sales_noc_dif,as.xts(request_ret_sales[,6]))
+
+p_retsales <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Retail Sales (YoY%)") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute,Eurostat, nationale statistische Ämter") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(ret_sales_dif["200001/"]$Deutschland, name ="Deutschland") %>% 
+  hc_add_series(ret_sales_dif["200001/"]$Frankreich, name = "Frankreich" ) %>% 
+  hc_add_series(ret_sales_dif["200001/"]$Italien, name = "Italien") %>% 
+  hc_add_series(ret_sales_dif["200001/"]$Spanien, name = "Spanien") %>% 
+  hc_add_series(ret_sales_dif["200001/"]$USA, name = "USA") %>%
+  hc_add_series(ret_sales_dif["200001/"]$China, name = "China") %>% 
+
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_retsales
+saveWidget(p_retsales, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_retsales.html", background = "rgba(250, 250, 250)")
+``` 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##CPI Dynamic
