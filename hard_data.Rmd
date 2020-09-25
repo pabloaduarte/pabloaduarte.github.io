@@ -302,6 +302,34 @@ saveWidget(p_retsales, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_retsa
 ``` 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+##Composite PMIs
+pmis <- c("markit_3y_pmidecomob", "markit_3y_pmifrcomob", "markit_3y_pmiitcomob", "markit_3y_pmiescomob","markit_3y_pmiezcomob", "markit_3y_pmiuscommeob", "markit_3y_pmicncomob")
+request_pmis <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(pmis))
+colnames(request_pmis) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
+
+
+p_pmis <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Composite PMI Output Index") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute,Eurostat, IHS Markit") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(request_pmis["200001/"]$Deutschland, name ="Deutschland") %>% 
+  hc_add_series(request_pmis["200001/"]$Frankreich, name = "Frankreich" ) %>% 
+  hc_add_series(request_pmis["200001/"]$Italien, name = "Italien") %>% 
+  hc_add_series(request_pmis["200001/"]$Spanien, name = "Spanien") %>% 
+  hc_add_series(request_pmis["200001/"]$USA, name = "USA") %>%
+  hc_add_series(request_pmis["200001/"]$China, name = "China") %>% 
+    hc_add_series(request_pmis["200001/"]$Eurozone, name = "Eurozone") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+p_pmis
+saveWidget(p_retsales, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_retsales.html", background = "rgba(250, 250, 250)")
+``` 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##CPI Dynamic
 p_cpi <- highchart(type = "stock" ) %>% 
   hc_title(text = "Verbraucherpreisindex (YoY%)") %>% 
