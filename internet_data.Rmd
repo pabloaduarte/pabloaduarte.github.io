@@ -24,24 +24,24 @@ library(highcharter)
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##China Data
-ctrip <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/ctrip.csv", sep=","))
+ctrip <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/ctrip.csv", sep=","))
 ctrip <- ctrip[,2:3]
 colnames(ctrip)<-c("time", "Ctrip")
 ctrip_cn <- ts_xts(ctrip)
 
-flight_ticket <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/flight ticket.csv", sep = ","))[,2:3]
+flight_ticket <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/flight ticket.csv", sep = ","))[,2:3]
 colnames(flight_ticket) <- c("time", "Flight Ticket")
 flight_ticket_cn <- ts_xts(flight_ticket)
 
-reservation <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/reservation.csv", sep=","))[,2:3]
+reservation <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/reservation.csv", sep=","))[,2:3]
 colnames(reservation)<-c("time", "Reservation")
 reservation_cn <- ts_xts(reservation)
 
-restaurant <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/restaurant.csv", sep=","))[,2:3]
+restaurant <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/restaurant.csv", sep=","))[,2:3]
 colnames(restaurant)<-c("time", "Restaurant")
 restaurant_cn <- ts_xts(restaurant)
 
-hotel <- data.frame(read.csv("C:/Users/DuarteP/OneDrive - Flossbach von Storch AG/FvS_work/nowcasting/tracker/china/hotel.csv", sep=","))[,2:3]
+hotel <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/hotel.csv", sep=","))[,2:3]
 colnames(hotel)<-c("time", "Hotel")
 hotel_cn <- ts_xts(hotel)
 
@@ -403,6 +403,7 @@ mobility<- c("citmap0014", "citmap0024", "citmap0025", "citmap0027", "citmap0010
 
 request_mobility <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(mobility))
 colnames(request_mobility) <- c("LA", "NYC", "Paris", "Rhine-Ruhr", "HK", "Milan", "Madrid", "London")
+citi_mobility_week <-  rollapply(request_mobility, 7, mean)
 
 
 p_citi <- highchart(type = "stock" ) %>% 
@@ -410,14 +411,14 @@ p_citi <- highchart(type = "stock" ) %>%
   hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Citymapper Mobility Index") %>% 
   hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
-  hc_add_series(request_mobility$LA , name ="Los Angeles") %>% 
-  hc_add_series(request_mobility$NYC, name = "NYC" ) %>% 
-  hc_add_series(request_mobility$Paris, name = "Paris") %>% 
-  hc_add_series(request_mobility$`Rhine-Ruhr`, name = "Rhine-Ruhr") %>% 
-  hc_add_series(request_mobility$HK, name = "Hong Kong") %>%
-  hc_add_series(request_mobility$Milan, name = "Milan") %>% 
-  hc_add_series(request_mobility$Madrid, name ="Madrid") %>% 
-  hc_add_series(request_mobility$London, name ="London") %>% 
+  hc_add_series(citi_mobility_week$LA , name ="Los Angeles") %>% 
+  hc_add_series(citi_mobility_week$NYC, name = "NYC" ) %>% 
+  hc_add_series(citi_mobility_week$Paris, name = "Paris") %>% 
+  hc_add_series(citi_mobility_week$`Rhine-Ruhr`, name = "Rhine-Ruhr") %>% 
+  hc_add_series(citi_mobility_week$HK, name = "Hong Kong") %>%
+  hc_add_series(citi_mobility_week$Milan, name = "Milan") %>% 
+  hc_add_series(citi_mobility_week$Madrid, name ="Madrid") %>% 
+  hc_add_series(citi_mobility_week$London, name ="London") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
   hc_tooltip(valueDecimals= 2)%>%
@@ -445,7 +446,7 @@ keywords=c("hotel")
 #set the geographic area: DE = Germany
 country=c("DE")
 #set the time window
-time <- paste("2018-12-01 ",Sys.Date(), sep = "")
+time <- paste("2016-12-01 ",Sys.Date(), sep = "")
 #set channels 
 channel="web"
 
@@ -472,7 +473,7 @@ keywords=c("airbnb")
 country=c("DE", "FR", "IT", "ES", "US")
 #set the time window
 ##time="2019-12-01 2020-05-12"
-time <- paste("2019-12-01 ",Sys.Date(), sep = "")
+time <- paste("2016-12-01 ",Sys.Date(), sep = "")
 
 #set channels 
 channel="web"
@@ -494,12 +495,12 @@ p_hotels <- highchart(type = "stock" ) %>%
  hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
-  hc_add_series(hotels["201812/"]$DE, name ="Deutschland", connectNulls = TRUE) %>% 
-  hc_add_series(hotels["201812/"]$FR, name = "Frankreich", connectNulls = TRUE ) %>% 
-  hc_add_series(hotels["201812/"]$IT, name = "Italien", connectNulls = TRUE) %>% 
-  hc_add_series(hotels["201812/"]$ES, name = "Spanien", connectNulls = TRUE) %>% 
-  hc_add_series(hotels["201812/"]$US, name = "USA", connectNulls = TRUE) %>%
-  hc_add_series(hotels["201812/"]$China, name = "China", connectNulls = TRUE) %>% 
+  hc_add_series(hotels["201612/"]$DE, name ="Deutschland", connectNulls = TRUE) %>% 
+  hc_add_series(hotels["201612/"]$FR, name = "Frankreich", connectNulls = TRUE ) %>% 
+  hc_add_series(hotels["201612/"]$IT, name = "Italien", connectNulls = TRUE) %>% 
+  hc_add_series(hotels["201612/"]$ES, name = "Spanien", connectNulls = TRUE) %>% 
+  hc_add_series(hotels["201612/"]$US, name = "USA", connectNulls = TRUE) %>%
+  hc_add_series(hotels["201612/"]$China, name = "China", connectNulls = TRUE) %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
   hc_tooltip(valueDecimals= 2)%>%

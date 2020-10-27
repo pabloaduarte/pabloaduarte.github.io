@@ -476,6 +476,35 @@ saveWidget(p_elec, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_elec.html
 ```
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
+##Redbook
+redbook<- c("ustrad4628")
+request_redbook <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(redbook))
+#index_redbook <- as.xts(apply(request_cn,2, function(x)  x*100/x["2019-11-01"]))
+
+colnames(request_redbook) <- c("Redbook")
+index_redbook <-  rollapply(request_redbook, 4, mean)
+
+
+p_redbook <- highchart(type = "stock" ) %>% 
+  hc_title(text = "USA: Johnson Redbook Index, Retail Trade") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Redbook Research Inc.,  monthly averages.") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(index_redbook$Redbook["200001/"], name ="Retail Trade, Redbook") %>% 
+  hc_colors(c("maroon","black", "gray", "navy", "orange", "red", "orange"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 6) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+
+p_redbook
+saveWidget(p_redbook, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_redbook.html", background = "rgba(250, 250, 250)")
+```
+
+
+
+```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##China
 china<- c("cnprod0401", "cnprod0185", "jodicngsdem_kbd")
 request_cn <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(china))

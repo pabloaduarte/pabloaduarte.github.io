@@ -5,7 +5,6 @@ title: ""
   body {background-color:rgba(250, 250, 250)}
 </style>
 
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##R Preamble
 library(MacrobondAPI)
@@ -37,8 +36,8 @@ f_de <- highchart(type = "stock") %>%
  hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_de_ts["200801/"]$Germany, name = "Activity Index", showInLegend = TRUE) %>%
-  hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
-  hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
+  hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (YoY%)") %>%
+  hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
   hc_tooltip(valueDecimals= 2)%>%
@@ -65,8 +64,8 @@ f_us <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_us_ts["200801/"]$USA, name  = "Activity Index") %>% 
-  hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
-  hc_add_series(factor_us_ts["200001/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
+  hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (YoY%)") %>%
+  hc_add_series(factor_us_ts["200801/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
   hc_tooltip(valueDecimals= 2)%>%
@@ -76,6 +75,30 @@ f_us
 saveWidget(f_us, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_us.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
 ```
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(foreign)
+factor_cn <- ts_df(read.dta("data_graph_cn.dta"))
+factor_cn_ts <- as.xts(factor_cn[,1:3], order.by = factor_cn$date)
+colnames(factor_cn_ts) <- c("GDP", "I. Production", "China")
+today <- as.character(Sys.Date())
+
+today <- as.character(Sys.Date())
+f_cn <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Real Economy Index: China") %>% 
+ hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+   hc_exporting(enabled = TRUE) %>%
+    hc_legend(enabled = TRUE) %>%
+  hc_add_series(factor_cn_ts["201812/"]$China, name  = "Activity Index") %>% 
+  hc_add_series(factor_cn_ts["201812/"]$GDP, name = "GDP (YoY%)") %>%
+  hc_add_series(factor_cn_ts["201812/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
+  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+f_cn
+saveWidget(f_cn, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_cn.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
+```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 require(foreign)
@@ -167,7 +190,7 @@ p_all <- highchart(type = "stock" ) %>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
 
-p_all
+#p_all
  saveWidget(p_all, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_all.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
 ```
 
