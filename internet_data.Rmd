@@ -375,7 +375,7 @@ p_gmob2 <- highchart(type = "stock" ) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
-p_gmob1
+p_gmob2
 saveWidget(p_gmob2, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_gmob_2.html", background = "rgba(250, 250, 250)")
 
 #dygraph(google_week["202003/"], main = "Google Community Mobility Reports: Arbeitsplätze", #width = "80%")%>%

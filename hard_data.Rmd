@@ -170,7 +170,7 @@ p_fr_plot <- p + labs(title = "Stromverbrauch: Frankreich",
 gdp <- c("denaac0152", "frnaac0284", "itnaac0466", "esnaac0097", "eunaac2903", "usnaac0169", "cnnaac0001")
 request_gdp <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp))
 colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
-gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x)-1)))
+gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x, n = 4L)-1)))
 #index(gdp_dif) <- as.yearqtr(index(gdp_dif))
 #index(gdp_dif) <- index(gdp_dif)+(1/4)
 
@@ -202,7 +202,7 @@ cpi_all <- merge.xts(cpi_dif, cpi_cn_dif)
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##GDP Dynamic Graph
 p_gdp <- highchart(type = "stock" ) %>% 
-  hc_title(text = "BIP-Wachstum (QoQ%)") %>% 
+  hc_title(text = "BIP-Wachstum (YoY%)") %>% 
  hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Eurostat, nationale statistische Ämter") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%

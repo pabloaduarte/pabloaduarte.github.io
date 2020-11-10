@@ -36,8 +36,8 @@ f_de <- highchart(type = "stock") %>%
  hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_de_ts["200801/"]$Germany, name = "Activity Index", showInLegend = TRUE) %>%
-  hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (YoY%)") %>%
-  hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
+  hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
+  hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
   hc_tooltip(valueDecimals= 2)%>%
@@ -64,8 +64,8 @@ f_us <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_us_ts["200801/"]$USA, name  = "Activity Index") %>% 
-  hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (YoY%)") %>%
-  hc_add_series(factor_us_ts["200801/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
+  hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
+  hc_add_series(factor_us_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
   hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
   hc_tooltip(valueDecimals= 2)%>%
