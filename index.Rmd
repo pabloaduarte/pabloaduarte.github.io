@@ -196,6 +196,7 @@ p_all <- highchart(type = "stock" ) %>%
 
 *Please read this [Technical Note](https://www.flossbachvonstorch-researchinstitute.com/fileadmin/user_upload/RI/Kommentare/files/200625-fvs-real-economy-index-technical-note.pdf) for details on the construction of the index*.
 
+*We estimate an approximate dynamic factor model such that $y^i_t = f_t + v^i_t$, where $y^i_t$ is a vector with all series of indicators, including GDP, $f_t$ a common factor, which is the activity index, and a idiosyncratic error term $v^i-t$ unique for each series.*
 
 
 
