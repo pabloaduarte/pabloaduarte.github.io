@@ -196,7 +196,7 @@ p_all <- highchart(type = "stock" ) %>%
 
 *Please read this [Technical Note](https://www.flossbachvonstorch-researchinstitute.com/fileadmin/user_upload/RI/Kommentare/files/200625-fvs-real-economy-index-technical-note.pdf) for details on the construction of the index*.
 
-*We estimate an approximate dynamic factor model such that $y^i_t = f_t + v^i_t$, where $y^i_t$ is a vector with all series of indicators, including GDP, $f_t$ a common factor, which is the activity index, and a idiosyncratic error term $v^i-t$ unique for each series.*
+*We estimate an approximate dynamic factor model such that $y^i_t = f_t + v^i_t$, where $y^i_t$ is a vector with all series of indicators, including GDP, $f_t$ a common factor, which is the activity index, and a idiosyncratic error term $v^i_t$ unique for each series. The data is available in mixed frequencies, from weekly to quarterly. The first lag of the common factor $f_{t-1}$ is therefore its value in the previous week and the value of GDP's previous quarter is $y^{GDP}_{t-12}$.*
 
 
 
