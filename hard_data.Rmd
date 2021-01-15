@@ -271,7 +271,7 @@ saveWidget(p_iprod, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/01_iprod.ht
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ##RETAIL SALES
-ret_sales <- c("detrad1360", "frtrad0310", "itttrad0728", "estrad0382", "ustrad0070", "cntrad0715")
+ret_sales <- c("detrad1360", "frtrad0928", "itttrad0728", "estrad0382", "ustrad0070", "cntrad0715") ##recall france: excluding vs including vehicles frtrad0310 vs frtrad0928 
 request_ret_sales <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(ret_sales))
 colnames(request_ret_sales) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "USA", "China")
 ret_sales_noc <- as.xts(request_ret_sales[,1:5])

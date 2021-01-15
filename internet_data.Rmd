@@ -1,5 +1,5 @@
 ---
-title: ""
+title: ''
 ---
 <style>
   body {background-color:rgba(250, 250, 250)}
@@ -57,16 +57,16 @@ library(gtrendsR)
 country=c("DE", "FR", "IT", "ES", "US")
 country_names = c("Deutschland", "Frankreich", "Italien", "Spanien", "USA")
 
-job_list<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 960)))
+job_list<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 960, onlyInterest=TRUE)))
 
-job_list_l<- data.frame(job_list$DE$interest_over_time$hits,
-                     job_list$FR$interest_over_time$hits,
-                     job_list$IT$interest_over_time$hits,
-                     job_list$ES$interest_over_time$hits,
-                     job_list$US$interest_over_time$hits)
+job_list_l<- data.frame(job_list$DE.interest_over_time.hits,
+                     job_list$FR.interest_over_time.hits,
+                     job_list$IT.interest_over_time.hits,
+                     job_list$ES.interest_over_time.hits,
+                     job_list$US.interest_over_time.hits)
 
 head(job_list_l)
-job_list_ts <- as.xts(job_list_l, order.by =job_list$DE$interest_over_time$date+days(6))
+job_list_ts <- as.xts(job_list_l, order.by =job_list$DE.interest_over_time.date+days(6))
 colnames(job_list_ts) <- c(country_names)
 job_list_gt <-  rollapply(job_list_ts, 12, mean)
 job_list_gt <- as.xts(apply(job_list_gt,2, function(x)  x*100/x["2019-11-02"]))
@@ -84,7 +84,7 @@ p_joblist_gt <- highchart(type = "stock" ) %>%
   hc_add_series(job_list_gt$Spanien, name = "Spanien") %>% 
   hc_add_series(job_list_gt$USA, name = "USA") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -135,7 +135,7 @@ p_unemp_gt <- highchart(type = "stock" ) %>%
   hc_add_series(unemp_rescale$Spanien, name = "Spanien") %>% 
   hc_add_series(unemp_rescale$USA, name = "USA") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -183,7 +183,7 @@ p_insolv_gt <- highchart(type = "stock" ) %>%
   hc_add_series(insolv_gt$US, name = "USA") %>%
   hc_add_series(insolv_gt$GB, name = "Großbritannien") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -246,7 +246,7 @@ p_travel_gt <- highchart(type = "stock" ) %>%
   hc_add_series(travel_gt$ES, name = "Spanien") %>% 
   hc_add_series(travel_gt$US, name = "USA") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -267,7 +267,7 @@ p_shopping_gt <- highchart(type = "stock" ) %>%
   hc_add_series(shopping_gt$ES, name = "Spanien") %>% 
   hc_add_series(shopping_gt$US, name = "USA") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -314,7 +314,7 @@ p_destination_gt <- highchart(type = "stock" ) %>%
   hc_add_series(destination_week$france, name = "Frankreich") %>% 
   hc_add_series(destination_week$portugal, name = "Portugal") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -352,7 +352,7 @@ p_gmob1 <- highchart(type = "stock" ) %>%
   hc_add_series(google_week$UK, name = "UK") %>%
   hc_add_series(google_week$USA, name = "USA") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -371,7 +371,7 @@ p_gmob2 <- highchart(type = "stock" ) %>%
   hc_add_series(google_stationeek$UK, name = "UK") %>%
   hc_add_series(google_stationeek$USA, name = "USA") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -420,7 +420,7 @@ p_citi <- highchart(type = "stock" ) %>%
   hc_add_series(citi_mobility_week$Madrid, name ="Madrid") %>% 
   hc_add_series(citi_mobility_week$London, name ="London") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -502,7 +502,7 @@ p_hotels <- highchart(type = "stock" ) %>%
   hc_add_series(hotels["201612/"]$US, name = "USA", connectNulls = TRUE) %>%
   hc_add_series(hotels["201612/"]$China, name = "China", connectNulls = TRUE) %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -557,7 +557,7 @@ p_gtus<- highchart(type = "stock" ) %>%
   hc_add_series(us_week$reservation, name = "reservation") %>% 
   hc_add_series(us_week$restaurant, name = "restaurant") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -601,7 +601,7 @@ p_gtde<- highchart(type = "stock" ) %>%
   hc_add_series(germany_week$reservierung, name = "Reservierung") %>% 
   hc_add_series(germany_week$restaurant, name = "Restaurant") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 2) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))

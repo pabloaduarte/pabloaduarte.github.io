@@ -39,7 +39,7 @@ f_de <- highchart(type = "stock") %>%
   hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
   hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -67,7 +67,7 @@ f_us <- highchart(type = "stock" ) %>%
   hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
   hc_add_series(factor_us_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -92,7 +92,7 @@ f_cn <- highchart(type = "stock" ) %>%
   hc_add_series(factor_cn_ts["201812/"]$GDP, name = "GDP (YoY%)") %>%
   hc_add_series(factor_cn_ts["201812/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 5) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -116,7 +116,7 @@ p_france <- highchart(type = "stock" ) %>%
   hc_add_series(factor_fr_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_fr_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
   hc_colors(c("orange", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -140,7 +140,7 @@ p_italy <- highchart(type = "stock" ) %>%
   hc_add_series(factor_it_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_it_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
   hc_colors(c("orange", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -185,7 +185,7 @@ p_all <- highchart(type = "stock" ) %>%
   hc_add_series(indices["200801/"]$Italy, name  = "Italy") %>% 
   hc_add_series(indices["200801/"]$Spain, name  = "Spain") %>% 
   hc_colors(c("maroon", "black", "navy", "gray", " orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
