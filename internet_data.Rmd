@@ -148,7 +148,7 @@ saveWidget(p_unemp_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_unemp
 ```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
 ##Bankruptcy
 country=c("DE", "FR", "IT", "ES", "US", "GB")
-time <- paste("2016-01-01 ",Sys.Date(), sep = "")
+time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 
 insolv<- sapply(country, function(x) gtrends(geo = x, cat = 423, time = time, onlyInterest = TRUE))
 
@@ -195,7 +195,7 @@ saveWidget(p_insolv_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_inso
 library(gtrendsR)
 ##Travel
 country=c("DE", "FR", "IT", "ES", "US")
-time <- paste("2016-01-01 ",Sys.Date(), sep = "")
+time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 
 travel<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 67, time = time, onlyInterest = TRUE)))
 
@@ -214,7 +214,7 @@ travel_gt <- as.xts(apply(travel_gt,2, function(x)  x*100/x["2019-11-03"]))
 
 ##Shopping
 country=c("DE", "FR", "IT", "ES", "US")
-time <- paste("2016-01-01 ",Sys.Date(), sep = "")
+time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 
 shopping<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 18, time = time, onlyInterest = TRUE)))
 
@@ -279,7 +279,7 @@ saveWidget(p_shopping_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_sh
 
 library(gtrendsR)
 # 208: Tourist Destination
-time <- paste("2016-05-01 ",Sys.Date(), sep = "")
+time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 keywords=c("italy", "spain", "greece", "germany", "france", "portugal")
 
 #set the time window
@@ -631,7 +631,7 @@ p_baidu <- highchart(type = "stock" ) %>%
   hc_add_series(baidu_index$Restaurant, name = "Restaurant") %>% 
   hc_add_series(baidu_index$Hotel, name = "Hotel") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))

@@ -171,6 +171,7 @@ gdp <- c("denaac0152", "frnaac0284", "itnaac0466", "esnaac0097", "eunaac2903", "
 request_gdp <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp))
 colnames(request_gdp) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "Eurozone", "USA", "China")
 gdp_dif <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x, n = 4L)-1)))
+index(gdp_dif) <- index(gdp_dif) + months(3)
 #index(gdp_dif) <- as.yearqtr(index(gdp_dif))
 #index(gdp_dif) <- index(gdp_dif)+(1/4)
 
@@ -379,7 +380,7 @@ p_trucks <- highchart(type = "stock" ) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(trucks_ma_index, name ="") %>% 
     hc_colors(c("maroon","black", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 1) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -453,7 +454,7 @@ p_elec <- highchart(type = "stock" ) %>%
   hc_add_series(week_all_index$Spanien["201601/"], name = "Spanien") %>% 
   hc_add_series(week_all_index$USA["201601/"], name = "USA") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 3) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -492,7 +493,7 @@ p_redbook <- highchart(type = "stock" ) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(index_redbook$Redbook["200001/"], name ="Retail Trade, Redbook") %>% 
   hc_colors(c("maroon","black", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 6) %>%
+  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
