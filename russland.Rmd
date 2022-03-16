@@ -44,7 +44,7 @@ p_mobility_rus <- highchart(type = "stock" ) %>%
   hc_add_series(google_week_rus["200001/"]$`Grocery & Pharmacy`, name = "Grocery & Pharmacy") %>% 
 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
-  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 1) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -187,7 +187,6 @@ tail(unemp_ts_rus)
 colnames(unemp_ts_rus) <- c(country_names)
 
 unemp_gt_rus <-  rollapply(unemp_ts_rus, 4, mean)
-plot(unemp_gt_rus)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -224,7 +223,6 @@ tail(bankruptcy_rus_ts)
 colnames(bankruptcy_rus_ts) <- c(country_names)
 
 bankruptcy_gt_rus <-  rollapply(bankruptcy_rus_ts, 4, mean)
-plot(bankruptcy_gt_rus)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -261,7 +259,6 @@ tail(travel_rus_ts)
 colnames(travel_rus_ts) <- c(country_names)
 
 travel_gt_rus <-  rollapply(travel_rus_ts, 4, mean)
-plot(travel_gt_rus)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -299,7 +296,6 @@ tail(shopping_rus_ts)
 colnames(shopping_rus_ts) <- c(country_names)
 
 shopping_gt_rus <-  rollapply(shopping_rus_ts, 4, mean)
-plot(shopping_gt_rus)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -336,12 +332,11 @@ tail(destination_rus_ts)
 colnames(destination_rus_ts) <- c(country_names)
 
 destination_gt_rus <-  rollapply(destination_rus_ts, 4, mean)
-plot(destination_gt_rus)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 p_gt_destination_rus <- highchart(type = "stock" ) %>% 
-  hc_title(text = "Russland: Google Trends Kategorie 'destination'") %>% 
+  hc_title(text = "Russland: Google Trends Kategorie 'Trip destination'") %>% 
  hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
