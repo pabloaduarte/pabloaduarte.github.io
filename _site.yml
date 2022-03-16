@@ -9,6 +9,8 @@ navbar:
       href: hard_data.html
     - text: "Internet Data"
       href: internet_data.html
+    - text: "Russian Data"
+      href: russland.html
     - text: "About"
       href: about.html
       

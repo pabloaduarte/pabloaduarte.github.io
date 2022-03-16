@@ -24,24 +24,25 @@ library(highcharter)
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##China Data
-ctrip <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/ctrip.csv", sep=","))
-ctrip <- ctrip[,2:3]
+baidu_data <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/bd.csv", sep=","))
+
+ctrip <- data.frame(baidu_data$startDate, baidu_data$ctrip)
 colnames(ctrip)<-c("time", "Ctrip")
 ctrip_cn <- ts_xts(ctrip)
 
-flight_ticket <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/flight ticket.csv", sep = ","))[,2:3]
+flight_ticket <- data.frame(baidu_data$startDate, baidu_data$flight.ticket)
 colnames(flight_ticket) <- c("time", "Flight Ticket")
 flight_ticket_cn <- ts_xts(flight_ticket)
 
-reservation <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/reservation.csv", sep=","))[,2:3]
+reservation <- data.frame(baidu_data$startDate, baidu_data$reservation)
 colnames(reservation)<-c("time", "Reservation")
 reservation_cn <- ts_xts(reservation)
 
-restaurant <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/restaurant.csv", sep=","))[,2:3]
+restaurant <- data.frame(baidu_data$startDate, baidu_data$restaurant)
 colnames(restaurant)<-c("time", "Restaurant")
 restaurant_cn <- ts_xts(restaurant)
 
-hotel <- data.frame(read.csv("C:/Users/DuarteP/Documents/projects/china_nowcast/hotel.csv", sep=","))[,2:3]
+hotel <- data.frame(baidu_data$startDate, baidu_data$hotel)
 colnames(hotel)<-c("time", "Hotel")
 hotel_cn <- ts_xts(hotel)
 
@@ -54,8 +55,8 @@ baidu_index <- as.xts(apply(baidu,2, function(x)  x*100/x["2019-11-04"]))
 ```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
 ##Job Listing
 library(gtrendsR)
-country=c("DE", "FR", "IT", "ES", "US")
-country_names = c("Deutschland", "Frankreich", "Italien", "Spanien", "USA")
+country=c("DE", "FR", "IT", "ES", "US","RU")
+country_names = c("Deutschland", "Frankreich", "Italien", "Spanien", "USA","Russland")
 
 job_list<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 960, onlyInterest=TRUE)))
 
@@ -63,7 +64,8 @@ job_list_l<- data.frame(job_list$DE.interest_over_time.hits,
                      job_list$FR.interest_over_time.hits,
                      job_list$IT.interest_over_time.hits,
                      job_list$ES.interest_over_time.hits,
-                     job_list$US.interest_over_time.hits)
+                     job_list$US.interest_over_time.hits,
+                     job_list$RU.interest_over_time.hits)
 
 head(job_list_l)
 job_list_ts <- as.xts(job_list_l, order.by =job_list$DE.interest_over_time.date+days(6))
@@ -75,7 +77,7 @@ job_list_gt <- as.xts(apply(job_list_gt,2, function(x)  x*100/x["2019-11-02"]))
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 p_joblist_gt <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: 'Job Listings'") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(job_list_gt$Deutschland, name ="Deutschland") %>% 
@@ -83,8 +85,9 @@ p_joblist_gt <- highchart(type = "stock" ) %>%
   hc_add_series(job_list_gt$Italien, name = "Italien") %>% 
   hc_add_series(job_list_gt$Spanien, name = "Spanien") %>% 
   hc_add_series(job_list_gt$USA, name = "USA") %>%
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(job_list_gt$Russland, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "green", "red"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -100,8 +103,8 @@ library(gtrendsR)
 ## 960: Job Listings
 ## 60: Jobs
 
-country=c("DE", "FR", "IT", "ES", "US")
-country_names = c("Deutschland", "Frankreich", "Italien", "Spanien", "USA")
+country=c("DE", "FR", "IT", "ES", "US","RU")
+country_names = c("Deutschland", "Frankreich", "Italien", "Spanien", "USA","Russland")
 
 ##Is  working! ##NO TIME and is fine
 unemployment <- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 706, onlyInterest=TRUE)))
@@ -110,7 +113,8 @@ unemp_l<- data.frame(unemployment$DE.interest_over_time.hits,
                      unemployment$FR.interest_over_time.hits,
                      unemployment$IT.interest_over_time.hits,
                      unemployment$ES.interest_over_time.hits,
-                     unemployment$US.interest_over_time.hits)
+                     unemployment$US.interest_over_time.hits,
+                     unemployment$RU.interest_over_time.hits)
 
 
 unemp_ts <- as.xts(unemp_l, order.by =unemployment$DE.interest_over_time.date+days(6))
@@ -126,7 +130,7 @@ unemp_rescale <- as.xts(apply(unemp_gt,2, function(x)  x*100/x["2019-11-02"]))
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 p_unemp_gt <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: 'Welfare and Unemployment'") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(unemp_rescale$Deutschland, name ="Deutschland") %>% 
@@ -134,8 +138,9 @@ p_unemp_gt <- highchart(type = "stock" ) %>%
   hc_add_series(unemp_rescale$Italien, name = "Italien") %>% 
   hc_add_series(unemp_rescale$Spanien, name = "Spanien") %>% 
   hc_add_series(unemp_rescale$USA, name = "USA") %>%
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(unemp_rescale$Russland, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "green", "red"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -147,17 +152,18 @@ saveWidget(p_unemp_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_unemp
 
 ```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
 ##Bankruptcy
-country=c("DE", "FR", "IT", "ES", "US", "GB")
+country=c("DE", "FR", "IT", "ES", "US", "GB","RU")
 time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 
-insolv<- sapply(country, function(x) gtrends(geo = x, cat = 423, time = time, onlyInterest = TRUE))
+insolv<- sapply(country, function(x) gtrends(geo = x, cat = 423, onlyInterest = TRUE))
 
 insolv_l<- data.frame(insolv$DE.interest_over_time$hits,
                       insolv$FR.interest_over_time$hits,
                       insolv$IT.interest_over_time$hits,
                       insolv$ES.interest_over_time$hits,
                       insolv$US.interest_over_time$hits,
-                      insolv$GB.interest_over_time$hits
+                      insolv$GB.interest_over_time$hits,
+                      insolv$RU.interest_over_time$hits
                       )
 
 
@@ -173,7 +179,7 @@ insolv_gt <- as.xts(apply(insolv_gt,2, function(x)  x*100/x["2019-11-03"]))
 ##Insolvency
 p_insolv_gt <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: 'Bankruptcy'") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(insolv_gt$DE, name ="Deutschland") %>% 
@@ -182,8 +188,9 @@ p_insolv_gt <- highchart(type = "stock" ) %>%
   hc_add_series(insolv_gt$ES, name = "Spanien") %>% 
   hc_add_series(insolv_gt$US, name = "USA") %>%
   hc_add_series(insolv_gt$GB, name = "Großbritannien") %>%
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(insolv_gt$GB, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -194,16 +201,17 @@ saveWidget(p_insolv_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_inso
 ```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
 library(gtrendsR)
 ##Travel
-country=c("DE", "FR", "IT", "ES", "US")
+country=c("DE", "FR", "IT", "ES", "US","RU")
 time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 
-travel<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 67, time = time, onlyInterest = TRUE)))
+travel<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 67, onlyInterest = TRUE)))
 
 travel_l<- data.frame(travel$DE.interest_over_time.hits,
                    travel$FR.interest_over_time.hits,
                    travel$IT.interest_over_time.hits,
                    travel$ES.interest_over_time.hits,
-                   travel$US.interest_over_time.hits)
+                   travel$US.interest_over_time.hits,
+                   travel$RU.interest_over_time.hits)
 
 
 travel_ts <- as.xts(travel_l, order.by =travel$DE.interest_over_time.date)
@@ -213,16 +221,17 @@ travel_gt <-  rollapply(travel_ts, 4, mean)
 travel_gt <- as.xts(apply(travel_gt,2, function(x)  x*100/x["2019-11-03"]))
 
 ##Shopping
-country=c("DE", "FR", "IT", "ES", "US")
+country=c("DE", "FR", "IT", "ES", "US","RU")
 time <- paste("2016-07-01 ",Sys.Date(), sep = "")
 
-shopping<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 18, time = time, onlyInterest = TRUE)))
+shopping<- data.frame(sapply(country, function(x) gtrends(geo = x, cat = 18, onlyInterest = TRUE)))
 
 shopping_l<- data.frame(shopping$DE.interest_over_time.hits,
                    shopping$FR.interest_over_time.hits,
                    shopping$IT.interest_over_time.hits,
                    shopping$ES.interest_over_time.hits,
-                   shopping$US.interest_over_time.hits)
+                   shopping$US.interest_over_time.hits,
+                   shopping$RU.interest_over_time.hits)
 
 
 shopping_ts <- as.xts(shopping_l, order.by =shopping$DE.interest_over_time.date)
@@ -237,7 +246,7 @@ shopping_gt <- as.xts(apply(shopping_gt,2, function(x)  x*100/x["2019-11-03"]))
 ##Travel
 p_travel_gt <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: 'Travel'") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(travel_gt$DE, name ="Deutschland") %>% 
@@ -245,8 +254,9 @@ p_travel_gt <- highchart(type = "stock" ) %>%
   hc_add_series(travel_gt$IT, name = "Italien") %>% 
   hc_add_series(travel_gt$ES, name = "Spanien") %>% 
   hc_add_series(travel_gt$US, name = "USA") %>%
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(travel_gt$US, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "green", "red"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -258,7 +268,7 @@ saveWidget(p_travel_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_trav
 ##Shopping
 p_shopping_gt <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: 'Shopping'") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(shopping_gt$DE, name ="Deutschland") %>% 
@@ -266,8 +276,9 @@ p_shopping_gt <- highchart(type = "stock" ) %>%
   hc_add_series(shopping_gt$IT, name = "Italien") %>% 
   hc_add_series(shopping_gt$ES, name = "Spanien") %>% 
   hc_add_series(shopping_gt$US, name = "USA") %>%
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(shopping_gt$RU, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "green", "red"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -280,17 +291,18 @@ saveWidget(p_shopping_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_sh
 library(gtrendsR)
 # 208: Tourist Destination
 time <- paste("2016-07-01 ",Sys.Date(), sep = "")
-keywords=c("italy", "spain", "greece", "germany", "france", "portugal")
+keywords=c("italy", "spain", "greece", "germany", "france", "portugal", "russia")
 
 #set the time window
-destination <- sapply(keywords, function(x) gtrends(x, geo = "", time, onlyInterest=TRUE, category = 208))
+destination <- sapply(keywords, function(x) gtrends(x, geo = "", onlyInterest=TRUE, category = 208))
 
 destination_l<- data.frame(destination$italy.interest_over_time$hits,
                      destination$spain.interest_over_time$hits,
                      destination$greece.interest_over_time$hits,
                      destination$germany.interest_over_time$hits,
                      destination$france.interest_over_time$hits,
-                     destination$portugal.interest_over_time$hits)
+                     destination$portugal.interest_over_time$hits,
+                     destination$russia.interest_over_time$hits)
 
 colnames(destination_l) <- keywords
 #head(destination_l)
@@ -298,23 +310,24 @@ colnames(destination_l) <- keywords
 destination_ts <- as.xts(destination_l, order.by =destination$italy.interest_over_time$date )
 
 #destination_week <-  rollapply(destination_ts, 7, mean)
-destination_week <- as.xts(apply(destination_ts,2, function(x)  x*100/x["2020-01-05"]))
+destination_week <- as.xts(apply(destination_ts,2, function(x)  x*100/x["2019-07-07"]))
 ```
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
-##Travel
+##Destination
 p_destination_gt <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: Land als Reiseziel") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
-  hc_add_series(destination_week$italy, name ="Italien") %>% 
-  hc_add_series(destination_week$spain, name = "Spanien" ) %>% 
-  hc_add_series(destination_week$greece, name = "Griechenland") %>% 
-  hc_add_series(destination_week$france, name = "Frankreich") %>% 
-  hc_add_series(destination_week$portugal, name = "Portugal") %>%
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(destination_ts$italy, name ="Italien") %>% 
+  hc_add_series(destination_ts$spain, name = "Spanien" ) %>% 
+  hc_add_series(destination_ts$greece, name = "Griechenland") %>% 
+  hc_add_series(destination_ts$france, name = "Frankreich") %>% 
+  hc_add_series(destination_ts$portugal, name = "Portugal") %>%
+  hc_add_series(destination_ts$russia, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "green", "red"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -327,22 +340,22 @@ saveWidget(p_destination_gt, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 ##Citiy Moblity Index
-google_w <- c("googledemo1571", "googledemo2189", "googledemo3995", "googledemo2003", "googledemo3131", "googledemo7577")
+google_w <- c("googledemo1571", "googledemo2189", "googledemo3995", "googledemo2003", "googledemo3131", "googledemo7577", "googledemo8051")
 
 request_google_w <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_w ))
-colnames(request_google_w ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
+colnames(request_google_w ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA","Russland")
 google_week <-  rollapply(request_google_w, 7, mean)
 
-google_station <- c("googledemo1570", "googledemo2002", "googledemo3130", "googledemo3994", "googledemo2188", "googledemo7576")
+google_station <- c("googledemo1570", "googledemo2002", "googledemo3130", "googledemo3994", "googledemo2188", "googledemo7576","googledemo8050")
 request_google_station <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_station))
-colnames(request_google_station ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA")
+colnames(request_google_station ) <- c("Deutschland", "Frankreich", "Italien", "Spanien", "UK", "USA","Russland")
 google_stationeek <-  rollapply(request_google_station, 7, mean)
 ```
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 p_gmob1 <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Community Mobility Reports: Arbeitsplätze") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google COVID-19 Community Mobility Reports.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google COVID-19 Community Mobility Reports.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(google_week$Deutschland, name ="Deutschland") %>% 
@@ -350,9 +363,10 @@ p_gmob1 <- highchart(type = "stock" ) %>%
   hc_add_series(google_week$Italien, name = "Italien") %>% 
   hc_add_series(google_week$Spanien, name = "Spanien") %>% 
   hc_add_series(google_week$UK, name = "UK") %>%
-  hc_add_series(google_week$USA, name = "USA") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(google_week$USA, name = "USA") %>%
+  hc_add_series(google_week$Russland, name = "Russland") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -361,7 +375,7 @@ saveWidget(p_gmob1, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_gmob_1.h
 
 p_gmob2 <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Mobility Reports: Bahnhöfe und Haltestellen") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google COVID-19 Community Mobility Reports.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google COVID-19 Community Mobility Reports.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(google_stationeek$Deutschland, name ="Deutschland") %>% 
@@ -370,8 +384,9 @@ p_gmob2 <- highchart(type = "stock" ) %>%
   hc_add_series(google_stationeek$Spanien, name = "Spanien") %>% 
   hc_add_series(google_stationeek$UK, name = "UK") %>%
   hc_add_series(google_stationeek$USA, name = "USA") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(google_stationeek$Russland, name = "Russland") %>%
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -408,7 +423,7 @@ citi_mobility_week <-  rollapply(request_mobility, 7, mean)
 
 p_citi <- highchart(type = "stock" ) %>% 
   hc_title(text = "Citymapper Mobility Index") %>% 
-  hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Citymapper Mobility Index") %>% 
+  hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Citymapper Mobility Index") %>% 
   hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(citi_mobility_week$LA , name ="Los Angeles") %>% 
@@ -420,7 +435,7 @@ p_citi <- highchart(type = "stock" ) %>%
   hc_add_series(citi_mobility_week$Madrid, name ="Madrid") %>% 
   hc_add_series(citi_mobility_week$London, name ="London") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "blue", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -450,7 +465,7 @@ time <- paste("2016-12-01 ",Sys.Date(), sep = "")
 #set channels 
 channel="web"
 
-hotels <- gtrends(keywords, geo = c("DE", "FR", "IT", "ES", "US"), time, onlyInterest=TRUE)
+hotels <- gtrends(keywords, geo = c("DE", "RU", "IT", "ES", "US"), onlyInterest=TRUE)
 hh <- hotels$interest_over_time
 hh <- data.frame(hh$date,hh$geo,hh$hits)
 colnames(hh)<-c("time","country","value")
@@ -470,7 +485,7 @@ hotels <- merge(hotels_rescale, hotel_cn_rescale)
 ##Airbnb
 keywords=c("airbnb")
 #set the geographic area: DE = Germany
-country=c("DE", "FR", "IT", "ES", "US")
+country=c("DE", "RU", "IT", "ES", "US")
 #set the time window
 ##time="2019-12-01 2020-05-12"
 time <- paste("2016-12-01 ",Sys.Date(), sep = "")
@@ -492,17 +507,18 @@ airbnb_week <-  rollapply(airbnb_ts, 7, mean)
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 p_hotels <- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: 'Hotel'") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(hotels["201612/"]$DE, name ="Deutschland", connectNulls = TRUE) %>% 
-  hc_add_series(hotels["201612/"]$FR, name = "Frankreich", connectNulls = TRUE ) %>% 
+  hc_add_series(hotels["201612/"]$RU, name = "Russland", connectNulls = TRUE ) %>% 
   hc_add_series(hotels["201612/"]$IT, name = "Italien", connectNulls = TRUE) %>% 
   hc_add_series(hotels["201612/"]$ES, name = "Spanien", connectNulls = TRUE) %>% 
   hc_add_series(hotels["201612/"]$US, name = "USA", connectNulls = TRUE) %>%
   hc_add_series(hotels["201612/"]$China, name = "China", connectNulls = TRUE) %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_add_series(hotels["201612/"]$RU, name = "Russland", connectNulls = TRUE) %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -533,7 +549,7 @@ saveWidget(p_hotels, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_hotels.
 ```{r echo=FALSE, results= "hide", message=FALSE, warning=FALSE}
 keywords=c("flight","booking","reservation","restaurant")
 #set the time window
-us <- sapply(keywords, function(x) gtrends(x, geo = "US", time, onlyInterest=TRUE))
+us <- sapply(keywords, function(x) gtrends(x, geo = "US", onlyInterest=TRUE))
 us_l<- data.frame(us$flight.interest_over_time$hits,
                      us$booking.interest_over_time$hits,us$reservation.interest_over_time$hits,
                      us$restaurant.interest_over_time$hits)
@@ -549,7 +565,7 @@ us_week <-  rollapply(us_ts, 7, mean)
 
 p_gtus<- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: Suchergebnisse in den USA") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(us_week$flight, name ="flight") %>% 
@@ -557,7 +573,7 @@ p_gtus<- highchart(type = "stock" ) %>%
   hc_add_series(us_week$reservation, name = "reservation") %>% 
   hc_add_series(us_week$restaurant, name = "restaurant") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -593,7 +609,7 @@ germany_week <-  rollapply(germany_ts, 7, mean)
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
 p_gtde<- highchart(type = "stock" ) %>% 
   hc_title(text = "Google Trends: Suchergebnisse in Deutschland") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Trends.") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(germany_week$flug , name ="Flug") %>% 
@@ -601,7 +617,7 @@ p_gtde<- highchart(type = "stock" ) %>%
   hc_add_series(germany_week$reservierung, name = "Reservierung") %>% 
   hc_add_series(germany_week$restaurant, name = "Restaurant") %>% 
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -622,7 +638,7 @@ saveWidget(p_gtde, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/02_gtde.html
 
 p_baidu <- highchart(type = "stock" ) %>% 
   hc_title(text = "Baidu-Index (11.2019 = 100)") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute, Baidu-Index") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Baidu-Index") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(baidu_index$Ctrip, name ="Ctrip") %>% 
@@ -631,7 +647,7 @@ p_baidu <- highchart(type = "stock" ) %>%
   hc_add_series(baidu_index$Restaurant, name = "Restaurant") %>% 
   hc_add_series(baidu_index$Hotel, name = "Hotel") %>%
   hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))

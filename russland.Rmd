@@ -1,0 +1,357 @@
+---
+title: ""
+---
+<style>
+  body {background-color:rgba(250, 250, 250)}
+</style>
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##R Preamble
+library(MacrobondAPI)
+library(tidyverse)
+library(zoo)
+library(xts)
+library(tsbox)
+library(ggplot2)
+library(plotly)
+library(htmlwidgets)
+library(htmltools)
+library(dygraphs)
+library(lubridate)
+library(highcharter)
+#library(gridExtra)
+```
+
+```{r echo=FALSE, message= FALSE, warning=FALSE}
+##Google Moblity Index
+google_rus <- c("googledemo8051", "googledemo8050", "googledemo8047", "googledemo8048")
+
+request_google_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(google_rus ))
+colnames(request_google_rus ) <- c("Workplaces", "Transit Stations", "Retail & Recreation", "Grocery & Pharmacy")
+google_week_rus <-  rollapply(request_google_rus, 7, mean)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_mobility_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Google Mobility Index") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Google Mobility Reports") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(google_week_rus["200001/"]$Workplaces, name = "Workplaces") %>% 
+  hc_add_series(google_week_rus["200001/"]$`Transit Stations`, name = "Transit Stations") %>% 
+  hc_add_series(google_week_rus["200001/"]$`Retail & Recreation`, name = "Retail & Recreation") %>% 
+  hc_add_series(google_week_rus["200001/"]$`Grocery & Pharmacy`, name = "Grocery & Pharmacy") %>% 
+
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_mobility_rus
+saveWidget(p_mobility_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_mobility.html", background = "rgba(250 250, 250)")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
+##GDP
+gdp_rus <- c("runaac0348")
+request_gdp_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(gdp_rus))
+colnames(request_gdp_rus) <- c("Russland")
+gdp_dif_rus <- as.xts(apply(request_gdp,2, function(x)  100*(x / lag(x, n = 4L)-1)))
+index(gdp_dif_rus) <- index(gdp_dif_rus) + months(3)
+#index(gdp_dif) <- as.yearqtr(index(gdp_dif))
+#index(gdp_dif) <- index(gdp_dif)+(1/4)
+
+##Industrial Prod
+iprod_rus <- c("ruprod2433") ##And Retail sales
+request_iprod_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(iprod_rus))
+colnames(request_iprod_rus) <- c("I_prod")
+iprod_dif_rus <- as.xts(apply(request_iprod_rus,2, function(x)  100*(x / lag(x,n=12L)-1)), dateFormat="Date") #weird date stuff
+
+## Retail sales
+retail_rus <- c("rutrad0156")
+request_retail_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(retail_rus))
+colnames(request_retail_rus) <- c("Ret_sales")
+retail_dif_rus <- request_retail_rus-100
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##GDP Dynamic Graph
+p_gdp_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: BIP-Wachstum, Industrieproduktion und Einzelhandelsumsätze (YoY%)") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(gdp_dif_rus["201001/"]$Russland, name = "BIP") %>% 
+  hc_add_series(iprod_dif_rus["201001/"]$I_prod, name = "Industrieproduktion") %>% 
+  hc_add_series(retail_dif_rus["201001/"]$Ret_sales, name = "Einzelhandelsumsatz") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 6) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_gdp_rus
+saveWidget(p_gdp_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_01_gdp.html", background = "rgba(250, 250, 250)")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
+##Inflation Russia MOM
+infl_rus <- c("rupric0001", "rupric0402")
+request_infl_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(infl_rus))
+colnames(request_infl_rus) <- c("CPI", "CPI_W")
+request_infl_rus <- request_infl_rus - 100
+
+cpi_rus <- c("rupric5448")
+request_cpi_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(cpi_rus))
+colnames(request_cpi_rus) <- c("CPI")
+cpi_dif_rus <- as.xts(apply(request_cpi_rus,2, function(x)  100*(x / lag(x, n = 12L)-1)))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_infl_rus_mom <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: monatliche Inflation") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(request_infl_rus["201001/"]$CPI, name = "CPI") %>% 
+  hc_add_series(request_infl_rus["201001/"]$CPI_W, name = "CPI (wöchentlich)") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_infl_rus_mom
+saveWidget(p_infl_rus_mom, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_infl_mom.html", background = "rgba(250, 250, 250)")
+
+p_infl_rus_yoy <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: jährliche Inflation") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(cpi_dif_rus["200001/"]$CPI, name = "CPI") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_infl_rus_yoy
+saveWidget(p_infl_rus_yoy, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_infl_yoy.html", background = "rgba(250, 250, 250)")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results="hide", fig.show='hide'}
+##PMIs
+pmis_rus <- c("markit_3y_pmirumanpm", "markit_3y_pmiruserob")
+request_pmis_rus <-MakeXtsFromUnifiedResponse(FetchUnifiedTimeSeriesDefault(pmis_rus))
+colnames(request_pmis_rus) <- c("Manufacturing", "Services")
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_pmi_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Einkaufsmanagerindizes (PMIs)") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(request_pmis_rus["200001/"]$Manufacturing, name = "Manufacturing") %>% 
+  hc_add_series(request_pmis_rus["200001/"]$Services, name = "Services") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_pmi_rus
+saveWidget(p_pmi_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_pmi.html", background = "rgba(250, 250, 250)")
+```
+
+```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
+##Unemployment GT
+library(gtrendsR)
+## 706: Welfare & Unemployment
+## 960: Job Listings
+## 60: Jobs
+
+country=c("RU")
+country_names = c("Russland")
+##Is  working! ##NO TIME and is fine
+unemployment_rus <- gtrends(geo = country, cat =706 , onlyInterest=TRUE)
+
+unemp_l<- data.frame(unemployment_rus$interest_over_time$hits)
+unemp_ts_rus <- as.xts(unemp_l, order.by =unemployment_rus$interest_over_time$date+days(6))
+tail(unemp_ts_rus)
+
+colnames(unemp_ts_rus) <- c(country_names)
+
+unemp_gt_rus <-  rollapply(unemp_ts_rus, 4, mean)
+plot(unemp_gt_rus)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_gt_unemp_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Google Trends Kategorie 'Welfare and Unemployment'") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(unemp_gt_rus["200001/"]$Russland, name = "GT: Welfare and Unemployment") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_gt_unemp_rus
+saveWidget(p_gt_unemp_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_gt_unemp.html", background = "rgba(250, 250, 250)")
+```
+
+```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
+##Bankruptcy GT
+library(gtrendsR)
+##cat 423
+
+country=c("RU")
+country_names = c("Russland")
+##Is  working! ##NO TIME and is fine
+bankruptcy_rus <- gtrends(geo = country, cat =423 , onlyInterest=TRUE)
+
+bankruptcy_rus_l<- data.frame(bankruptcy_rus$interest_over_time$hits)
+bankruptcy_rus_ts<- as.xts(bankruptcy_rus_l, order.by =bankruptcy_rus$interest_over_time$date+days(6))
+tail(bankruptcy_rus_ts)
+
+colnames(bankruptcy_rus_ts) <- c(country_names)
+
+bankruptcy_gt_rus <-  rollapply(bankruptcy_rus_ts, 4, mean)
+plot(bankruptcy_gt_rus)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_gt_bankruptcy_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Google Trends Kategorie 'Bankruptcy'") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(bankruptcy_gt_rus["200001/"]$Russland, name = "GT: Bankruptcy") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_gt_bankruptcy_rus
+saveWidget(p_gt_bankruptcy_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_gt_bankruptcy.html", background = "rgba(250, 250, 250)")
+```
+
+```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
+##Travel GT
+library(gtrendsR)
+##cat 67
+
+country=c("RU")
+country_names = c("Russland")
+##Is  working! ##NO TIME and is fine
+travel_rus <- gtrends(geo = country, cat =67 , onlyInterest=TRUE)
+
+travel_rus_l<- data.frame(travel_rus$interest_over_time$hits)
+travel_rus_ts<- as.xts(travel_rus_l, order.by =travel_rus$interest_over_time$date+days(6))
+tail(travel_rus_ts)
+
+colnames(travel_rus_ts) <- c(country_names)
+
+travel_gt_rus <-  rollapply(travel_rus_ts, 4, mean)
+plot(travel_gt_rus)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_gt_travel_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Google Trends Kategorie 'travel'") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(travel_gt_rus["200001/"]$Russland, name = "GT: travel") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_gt_travel_rus
+saveWidget(p_gt_travel_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_gt_travel.html", background = "rgba(250, 250, 250)")
+```
+
+
+```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
+##Shopping GT
+library(gtrendsR)
+##cat 18
+
+country=c("RU")
+country_names = c("Russland")
+##Is  working! ##NO TIME and is fine
+shopping_rus <- gtrends(geo = country, cat =18 , onlyInterest=TRUE)
+
+shopping_rus_l<- data.frame(shopping_rus$interest_over_time$hits)
+shopping_rus_ts<- as.xts(shopping_rus_l, order.by =shopping_rus$interest_over_time$date+days(6))
+tail(shopping_rus_ts)
+
+colnames(shopping_rus_ts) <- c(country_names)
+
+shopping_gt_rus <-  rollapply(shopping_rus_ts, 4, mean)
+plot(shopping_gt_rus)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_gt_shopping_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Google Trends Kategorie 'shopping'") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(shopping_gt_rus["200001/"]$Russland, name = "GT: shopping") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_gt_shopping_rus
+saveWidget(p_gt_shopping_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_gt_shopping.html", background = "rgba(250, 250, 250)")
+```
+
+```{r echo=FALSE, results = "hide", message=FALSE, warning=FALSE}
+##Destination GT
+library(gtrendsR)
+##cat 208
+
+country=c("RU")
+country_names = c("Russland")
+##Is  working! ##NO TIME and is fine
+destination_rus <- gtrends(geo = country, cat =208 , onlyInterest=TRUE)
+
+destination_rus_l<- data.frame(destination_rus$interest_over_time$hits)
+destination_rus_ts<- as.xts(destination_rus_l, order.by =destination_rus$interest_over_time$date+days(6))
+tail(destination_rus_ts)
+
+colnames(destination_rus_ts) <- c(country_names)
+
+destination_gt_rus <-  rollapply(destination_rus_ts, 4, mean)
+plot(destination_gt_rus)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p_gt_destination_rus <- highchart(type = "stock" ) %>% 
+  hc_title(text = "Russland: Google Trends Kategorie 'destination'") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute, Rosstat") %>% 
+   hc_exporting(enabled = TRUE) %>%
+      hc_legend(enabled = TRUE) %>%
+  hc_add_series(destination_gt_rus["200001/"]$Russland, name = "GT: destination") %>% 
+  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
+  hc_tooltip(valueDecimals= 2)%>%
+  hc_chart(style = list(fontFamily = "BigVesta",
+                        fontWeight = "bold"))
+
+p_gt_destination_rus
+saveWidget(p_gt_destination_rus, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/rus_gt_destination.html", background = "rgba(250, 250, 250)")
+```

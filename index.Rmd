@@ -1,5 +1,5 @@
 ---
-title: ""
+title: ''
 ---
 <style>
   body {background-color:rgba(250, 250, 250)}
@@ -32,14 +32,14 @@ colnames(factor_de_ts) <- c("GDP", "I. Production", "Germany", "Activity Index2"
 today <- as.character(Sys.Date())
 f_de <- highchart(type = "stock") %>% 
   hc_title(text = "Real Economy Index: Germany") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom", text = "Quelle: Flossbach von Storch Research Institute") %>% 
  hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_de_ts["200801/"]$Germany, name = "Activity Index", showInLegend = TRUE) %>%
   hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
   hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -60,14 +60,14 @@ today <- as.character(Sys.Date())
 today <- as.character(Sys.Date())
 f_us <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index: USA") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom",text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_us_ts["200801/"]$USA, name  = "Activity Index") %>% 
   hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
   hc_add_series(factor_us_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -85,14 +85,14 @@ today <- as.character(Sys.Date())
 today <- as.character(Sys.Date())
 f_cn <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index: China") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom",text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_cn_ts["201812/"]$China, name  = "Activity Index") %>% 
   hc_add_series(factor_cn_ts["201812/"]$GDP, name = "GDP (YoY%)") %>%
   hc_add_series(factor_cn_ts["201812/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
   hc_colors(c("maroon", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
@@ -110,17 +110,17 @@ today <- as.character(Sys.Date())
 today <- as.character(Sys.Date())
 p_france <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index: France") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom",text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE) %>%  hc_add_series(factor_fr_ts["200801/"]$France, name  = "Activity Index") %>% 
   hc_add_series(factor_fr_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_fr_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
-  hc_colors(c("orange", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
-# p_france
+ p_france
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -133,18 +133,18 @@ today <- as.character(Sys.Date())
 today <- as.character(Sys.Date())
 p_italy <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index: Italy") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom",text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_it_ts["200801/"]$Italy, name  = "Activity Index") %>% 
   hc_add_series(factor_it_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_it_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
-  hc_colors(c("orange", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
-#p_italy
+p_italy
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -156,18 +156,18 @@ today <- as.character(Sys.Date())
 
 p_spain <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index: Spain") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom",text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(factor_es_ts["200801/"]$Spain, name  = "Activity Index") %>% 
   hc_add_series(factor_es_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_es_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
-  hc_colors(c("orange", "navy", "gray"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
-#p_spain
+p_spain
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -176,7 +176,7 @@ indices <- merge(factor_de_ts$Germany, factor_us_ts$USA, factor_fr_ts$France, fa
 
 p_all <- highchart(type = "stock" ) %>% 
   hc_title(text = "Real Economy Index") %>% 
- hc_subtitle(text = "Quelle: Flossbach von Storch Research Institute") %>% 
+ hc_subtitle(verticalAlign = "bottom",text = "Quelle: Flossbach von Storch Research Institute") %>% 
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(indices["200801/"]$Germany, name  = "Germany") %>% 
@@ -185,7 +185,7 @@ p_all <- highchart(type = "stock" ) %>%
   hc_add_series(indices["200801/"]$Italy, name  = "Italy") %>% 
   hc_add_series(indices["200801/"]$Spain, name  = "Spain") %>% 
   hc_colors(c("maroon", "black", "navy", "gray", " orange"))%>%
-  hc_rangeSelector(inputDateFormat = '%y-%m-%d', selected = 4) %>%
+  hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
   hc_chart(style = list(fontFamily = "BigVesta",
                         fontWeight = "bold"))
