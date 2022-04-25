@@ -18,4 +18,4 @@ output:
   html_document: 
    theme: flatly
    self_contained: TRUE
-   fontFamily: "BigVesta"
+   fontFamily: "BigVestaPro"
