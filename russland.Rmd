@@ -20,7 +20,23 @@ library(htmltools)
 library(dygraphs)
 library(lubridate)
 library(highcharter)
+if(!require(extrafont)){
+  install.packages("extrafont")
+  library(extrafont)
+}
+
+if(!require(remotes)){
+  install.packages("remotes")
+  library(remotes)
+}
 #library(gridExtra)
+
+color1 <- rgb(0/255, 47/255, 106/255)
+color2 <- rgb(220/255, 166/255, 100/255)
+color3 <- rgb(90/255, 150/255, 175/255)
+color4 <- rgb(192/255, 89/255, 72/255)
+color5 <- rgb(100/255, 50/255, 70/255)
+
 ```
 
 ```{r echo=FALSE, message= FALSE, warning=FALSE}
@@ -43,10 +59,10 @@ p_mobility_rus <- highchart(type = "stock" ) %>%
   hc_add_series(google_week_rus["200001/"]$`Retail & Recreation`, name = "Retail & Recreation") %>% 
   hc_add_series(google_week_rus["200001/"]$`Grocery & Pharmacy`, name = "Grocery & Pharmacy") %>% 
 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 1) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_mobility_rus
@@ -86,10 +102,10 @@ p_gdp_rus <- highchart(type = "stock" ) %>%
   hc_add_series(gdp_dif_rus["201001/"]$Russland, name = "BIP") %>% 
   hc_add_series(iprod_dif_rus["201001/"]$I_prod, name = "Industrieproduktion") %>% 
   hc_add_series(retail_dif_rus["201001/"]$Ret_sales, name = "Einzelhandelsumsatz") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 6) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_gdp_rus
@@ -117,10 +133,10 @@ p_infl_rus_mom <- highchart(type = "stock" ) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(request_infl_rus["201001/"]$CPI, name = "CPI") %>% 
   hc_add_series(request_infl_rus["201001/"]$CPI_W, name = "CPI (wöchentlich)") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_infl_rus_mom
@@ -132,10 +148,10 @@ p_infl_rus_yoy <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(cpi_dif_rus["200001/"]$CPI, name = "CPI") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_infl_rus_yoy
@@ -158,10 +174,10 @@ p_pmi_rus <- highchart(type = "stock" ) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(request_pmis_rus["200001/"]$Manufacturing, name = "Manufacturing") %>% 
   hc_add_series(request_pmis_rus["200001/"]$Services, name = "Services") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_pmi_rus
@@ -196,10 +212,10 @@ p_gt_unemp_rus <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(unemp_gt_rus["200001/"]$Russland, name = "GT: Welfare and Unemployment") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_gt_unemp_rus
@@ -232,10 +248,10 @@ p_gt_bankruptcy_rus <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(bankruptcy_gt_rus["200001/"]$Russland, name = "GT: Bankruptcy") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_gt_bankruptcy_rus
@@ -268,10 +284,10 @@ p_gt_travel_rus <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(travel_gt_rus["200001/"]$Russland, name = "GT: travel") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_gt_travel_rus
@@ -305,10 +321,10 @@ p_gt_shopping_rus <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(shopping_gt_rus["200001/"]$Russland, name = "GT: shopping") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_gt_shopping_rus
@@ -341,10 +357,10 @@ p_gt_destination_rus <- highchart(type = "stock" ) %>%
    hc_exporting(enabled = TRUE) %>%
       hc_legend(enabled = TRUE) %>%
   hc_add_series(destination_gt_rus["200001/"]$Russland, name = "GT: destination") %>% 
-  hc_colors(c("black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
+  hc_colors(c(color1,color2,color3,color4,color5,"black","maroon", "gray", "navy", "orange", "red", "blue","green"))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 5) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_gt_destination_rus

@@ -20,11 +20,26 @@ library(dygraphs)
 library(lubridate)
 library(lubridate)
 library(highcharter)
+if(!require(extrafont)){
+  install.packages("extrafont")
+  library(extrafont)
+}
+
+if(!require(remotes)){
+  install.packages("remotes")
+  library(remotes)
+}
 
 require(foreign)
 factor_de <- ts_df(read.dta("data_graph_de.dta"))
 factor_de_ts <- as.xts(factor_de[,1:4], order.by = factor_de$date)
 colnames(factor_de_ts) <- c("GDP", "I. Production", "Germany", "Activity Index2")
+
+color1 <- rgb(0/255, 47/255, 106/255)
+color2 <- rgb(220/255, 166/255, 100/255)
+color3 <- rgb(90/255, 150/255, 175/255)
+color4 <- rgb(192/255, 89/255, 72/255)
+color5 <- rgb(100/255, 50/255, 70/255)
 
 ```
 
@@ -38,10 +53,10 @@ f_de <- highchart(type = "stock") %>%
   hc_add_series(factor_de_ts["200801/"]$Germany, name = "Activity Index", showInLegend = TRUE) %>%
   hc_add_series(factor_de_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
   hc_add_series(factor_de_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
-  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_colors(c(color1, color2, color3))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 f_de
@@ -66,10 +81,10 @@ f_us <- highchart(type = "stock" ) %>%
   hc_add_series(factor_us_ts["200801/"]$USA, name  = "Activity Index") %>% 
   hc_add_series(factor_us_ts["200801/"]$GDP, name = "GDP (QoQ%)") %>%
   hc_add_series(factor_us_ts["200801/"]$`I. Production`, name = "Industrial Production (QoQ%)") %>%
-  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_colors(c(color1, color2, color3))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 f_us
 saveWidget(f_us, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_us.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
@@ -91,10 +106,10 @@ f_cn <- highchart(type = "stock" ) %>%
   hc_add_series(factor_cn_ts["201812/"]$China, name  = "Activity Index") %>% 
   hc_add_series(factor_cn_ts["201812/"]$GDP, name = "GDP (YoY%)") %>%
   hc_add_series(factor_cn_ts["201812/"]$`I. Production`, name = "Industrial Production (YoY%)") %>%
-  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_colors(c(color1, color2, color3))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 f_cn
 saveWidget(f_cn, "C:/Users/DuarteP/Documents/web/real_tracker_fvs/00_f_cn.html",selfcontained = TRUE, background = "rgba(250, 250, 250)")
@@ -115,10 +130,10 @@ p_france <- highchart(type = "stock" ) %>%
     hc_legend(enabled = TRUE) %>%  hc_add_series(factor_fr_ts["200801/"]$France, name  = "Activity Index") %>% 
   hc_add_series(factor_fr_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_fr_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
-  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_colors(c(color1, color2, color3))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
  p_france
 ```
@@ -139,10 +154,10 @@ p_italy <- highchart(type = "stock" ) %>%
   hc_add_series(factor_it_ts["200801/"]$Italy, name  = "Activity Index") %>% 
   hc_add_series(factor_it_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_it_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
-  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_colors(c(color1, color2, color3))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 p_italy
 ```
@@ -162,10 +177,10 @@ p_spain <- highchart(type = "stock" ) %>%
   hc_add_series(factor_es_ts["200801/"]$Spain, name  = "Activity Index") %>% 
   hc_add_series(factor_es_ts["200801/"]$GDP, name = "GDP") %>%
   hc_add_series(factor_es_ts["200801/"]$`I. Production`, name = "Industrial Production") %>%
-  hc_colors(c("maroon", "navy", "gray"))%>%
+  hc_colors(c(color1, color2, color3))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 p_spain
 ```
@@ -184,10 +199,10 @@ p_all <- highchart(type = "stock" ) %>%
   hc_add_series(indices["200801/"]$France, name  = "France") %>% 
   hc_add_series(indices["200801/"]$Italy, name  = "Italy") %>% 
   hc_add_series(indices["200801/"]$Spain, name  = "Spain") %>% 
-  hc_colors(c("maroon", "black", "navy", "gray", " orange"))%>%
+  hc_colors(c(color1, color2, color3,color4,color5))%>%
   hc_rangeSelector(inputDateFormat = '%d-%m-%Y', selected = 4) %>%
   hc_tooltip(valueDecimals= 2)%>%
-  hc_chart(style = list(fontFamily = "BigVesta",
+  hc_chart(style = list(fontFamily = "Big Vesta Pro",
                         fontWeight = "bold"))
 
 p_all
