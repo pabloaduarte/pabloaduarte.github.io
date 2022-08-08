@@ -13,7 +13,8 @@
 
 <title>About</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -59,6 +60,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -79,6 +81,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -231,7 +236,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -272,7 +277,11 @@ $(document).ready(function () {
 </div>
 
 
-<p>Dieses Pilotprojekt des <a href="https://www.flossbachvonstorch-researchinstitute.com/de/">Flossbach von Storch Research Institute</a> ist eine Zusammenarbeit von Ökonomen, die relevante Informationen zur Entwicklung der Realwirtschaft anhand öffentlicher Daten zusammenfügen und bereitstellen wollen.</p>
+<p>Dieses Pilotprojekt des <a
+href="https://www.flossbachvonstorch-researchinstitute.com/de/">Flossbach
+von Storch Research Institute</a> ist eine Zusammenarbeit von Ökonomen,
+die relevante Informationen zur Entwicklung der Realwirtschaft anhand
+öffentlicher Daten zusammenfügen und bereitstellen wollen.</p>
 <center>
 <div id="kontakt" class="section level4">
 <h4>Kontakt</h4>
@@ -280,8 +289,10 @@ $(document).ready(function () {
 </div>
 <div id="mitwirkende" class="section level4">
 <h4>Mitwirkende</h4>
-<p><a href="https://www.flossbachvonstorch-researchinstitute.com/en/about-us/team/" target="_blank">Dr. Pablo Duarte</a></p>
-<p><a href="https://www.wiwi.uni-muenster.de/oeew/de/dr-jingjing-lyu" target="_blank">Dr. Jingjing Lyu</a></p>
+<p><a href="https://www.flossbachvonstorch-researchinstitute.com/en/about-us/team/" target="_blank">Dr. Pablo
+Duarte</a></p>
+<p><a href="https://www.wiwi.uni-muenster.de/oeew/de/dr-jingjing-lyu" target="_blank">Dr. Jingjing
+Lyu</a></p>
 </center>
 </div>
 
